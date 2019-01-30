@@ -27,6 +27,12 @@ public class BigLoop {
 		}
 	}
 
+	public void cleanUp() {
+		for (LoopModule o : objects){
+			o.init();
+		}
+	}
+
 	public void add(LoopModule o) {
 		objects.add(o);
 	}

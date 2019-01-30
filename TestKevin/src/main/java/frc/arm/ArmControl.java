@@ -30,5 +30,7 @@ public class ArmControl implements LoopModule {
         if (Math.abs(Xbox.getStickLY()) > 0) {
             arm.setElbowMotor(Xbox.getStickLY());
         }
+
+        
     }
 }

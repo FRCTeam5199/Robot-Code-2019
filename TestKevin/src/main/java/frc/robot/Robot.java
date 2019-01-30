@@ -51,5 +51,12 @@ public class Robot extends TimedRobot {
         BigLoop bigLoop = new BigLoop(cl);
 
         bigLoop.add(armControl);
+
+        bigLoop.init();
+        
+        while (isEnabled() && isOperatorControl()) {
+            bigLoop.update();
+        }
+        bigLoop.cleanUp();
     }
 }
