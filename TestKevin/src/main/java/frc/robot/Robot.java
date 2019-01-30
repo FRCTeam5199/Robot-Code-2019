@@ -43,12 +43,14 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
-        // ugly ass arm code (fix this)
-        if (Math.abs(Xbox.getStickLY()) > 0) {
-            motorWrist.set(Xbox.getStickLY());
-        }
+        //goal: move the arm in a way that is not dumb
+        // wrist
         if (Math.abs(Xbox.getStickRY()) > 0) {
-            motorElbow.set(Xbox.getStickRY());
+            motorWrist.set(Xbox.getStickRY());
+        }
+        // elbow
+        if (Math.abs(Xbox.getStickLY()) > 0) {
+            motorElbow.set(Xbox.getStickLY());
         }
     }
 }
