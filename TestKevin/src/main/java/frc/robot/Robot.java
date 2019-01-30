@@ -35,7 +35,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         nBroadcaster = new RemoteOutput("10.51.99.27", 5800);
         Robot.nBroadcaster.println("Starting up...");
-
+        Xbox = new XBoxController(0);
         motorWrist = new CANSparkMax(RobotMap.wristMotor, MotorType.kBrushless);
 
     }
@@ -43,7 +43,7 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
         // ugly ass arm code (fix this)
-        if (Joy.getYAxis() > 0) {
+        if (Xbox.getStickLY() > 0) {
             motorWrist.set(Joy.getYAxis());
         }
     }
