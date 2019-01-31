@@ -23,14 +23,21 @@ public class ArmControl implements LoopModule {
 
     @Override
     public void update(long delta){
-        if (Math.abs(Xbox.getStickRY()) > 0) {
-            arm.setWristMotor(Xbox.getStickRY());
-        }
+        //wrist
+        // if (Math.abs(Xbox.getStickRY()) > 0) {
+        //     arm.setWristMotor(Xbox.getStickRY());
+        // }
         // elbow
-        if (Math.abs(Xbox.getStickLY()) > 0) {
-            arm.setElbowMotor(Xbox.getStickLY());
+        // if (Math.abs(Xbox.getStickLY()) > 0) {
+        //     arm.setElbowMotor(Xbox.getStickLY());
+        // }
+        
+        if  (Xbox.getButton(1)) {
+            elbowPID.setReference(rotations, ControlType.kPosition);
         }
 
+        SmartDashboard.putNumber("SetPoint", arm.rotations);
+        SmartDashboard.putNumber("ProcessVariable", arm.getElbowEncoder().getPosition());
         
     }
 }
