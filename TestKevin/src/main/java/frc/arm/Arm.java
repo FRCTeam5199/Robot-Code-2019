@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANEncoder;
+import com.revrobotics.ControlType;
 import com.revrobotics.CANPIDController;
 
 public class Arm {
@@ -65,7 +66,7 @@ public class Arm {
         elbowPID.setD(SmartDashboard.getNumber("Elbow D", 0));
 
         rotations = SmartDashboard.getNumber("Elbow Rotations", 0);
-        
+
 	}
     
     public void setElbowMotor(double speed) {
@@ -82,6 +83,12 @@ public class Arm {
 
     public CANEncoder getElbowEncoder() {
         return elbowEncoder;
+    }
+
+    public void setElbowGoal(double r, ControlType c){
+        SmartDashboard.putNumber("SetPoint", rotations);
+        SmartDashboard.putNumber("ProcessVariable", elbowEncoder.getPosition());
+        elbowPID.setReference(r, c);
     }
 
     // public void setWristMotor(double speed) {
