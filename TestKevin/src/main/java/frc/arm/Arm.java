@@ -21,7 +21,7 @@ public class Arm {
     private final CANPIDController elbowPID;
     private final CANPIDController wristPID;
     public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
-    public double rotations;
+    public double rotations, ePos;
 
     public Arm() {
 
@@ -73,6 +73,7 @@ public class Arm {
     }
 
     public double getElbowPosition() {
+        SmartDashboard.putNumber("Elbow Position", ePos);
         return elbowEncoder.getPosition();
     }
 
@@ -85,7 +86,6 @@ public class Arm {
     }
 
     public void setElbowGoal(double r, ControlType c){
-        SmartDashboard.putNumber("SetPoint", rotations);
         SmartDashboard.putNumber("ProcessVariable", elbowEncoder.getPosition());
         elbowPID.setReference(r, c);
     }

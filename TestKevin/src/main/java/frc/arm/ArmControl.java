@@ -32,9 +32,8 @@ public class ArmControl implements LoopModule {
         arm.initAdjustPID();
         arm.adjustPID();
 
-        if  (Xbox.getButton(1)) {
-            arm.setElbowGoal(arm.rotations, ControlType.kPosition);
-        }
+        arm.setElbowGoal(arm.rotations, ControlType.kPosition);
+        
         if (Math.abs(Xbox.getStickLY()) > 0 ){
             arm.setElbowMotor(Xbox.getStickLY());
         }
