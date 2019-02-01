@@ -15,11 +15,11 @@ import com.revrobotics.CANPIDController;
 public class Arm {
 
     private final SparkMaxPID elbowMotor;
-    //private final SparkMaxPID wristMotor;
+    private final SparkMaxPID wristMotor;
     private final CANEncoder elbowEncoder;
-    //private final CANEncoder wristEncoder;
+    private final CANEncoder wristEncoder;
     private final CANPIDController elbowPID;
-    //private final CANPIDController wristPID;
+    private final CANPIDController wristPID;
     public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
     public double rotations;
 
@@ -34,12 +34,11 @@ public class Arm {
         kMinOutput = -1;
 
         elbowMotor = new SparkMaxPID(RobotMap.elbowMotor, MotorType.kBrushless);
-        //wristMotor = new SparkMaxPID(RobotMap.wristMotor, MotorType.kBrushless);
+        wristMotor = new SparkMaxPID(RobotMap.wristMotor, MotorType.kBrushless);
         elbowEncoder = elbowMotor.getEncoder();
-        //wristEncoder = wristMotor.getEncoder();
-
+        wristEncoder = wristMotor.getEncoder();
         elbowPID = elbowMotor.getPIDController();
-        //wristPID = wristMotor.getPIDController();
+        wristPID = wristMotor.getPIDController();
         elbowPID.setP(kP);
         elbowPID.setI(kI);
         elbowPID.setD(kD);
@@ -91,20 +90,20 @@ public class Arm {
         elbowPID.setReference(r, c);
     }
 
-    // public void setWristMotor(double speed) {
-    //     wristMotor.set(speed);
-    // }
+    public void setWristMotor(double speed) {
+        wristMotor.set(speed);
+    }
 
-    // public double getWristPosition() {
-    //     return wristEncoder.getPosition();
-    // }
+    public double getWristPosition() {
+        return wristEncoder.getPosition();
+    }
 
-    // public double getWristVelocity() {
-    //     return wristEncoder.getVelocity();
-    // }
+    public double getWristVelocity() {
+        return wristEncoder.getVelocity();
+    }
 
-    // public CANEncoder getWristEncoder() {
-    //     return wristEncoder;
-    // }
+    public CANEncoder getWristEncoder() {
+        return wristEncoder;
+    }
 
 }
