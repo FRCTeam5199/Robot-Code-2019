@@ -21,14 +21,7 @@ public class ArmControl implements LoopModule {
 
     @Override
     public void update(long delta){
-        //wrist
-        // if (Math.abs(Xbox.getStickRY()) > 0) {
-        //     arm.setWristMotor(Xbox.getStickRY());
-        // }
-        // elbow
-        // if (Math.abs(Xbox.getStickLY()) > 0) {
-        //     arm.setElbowMotor(Xbox.getStickLY());
-        // }
+
         arm.initAdjustPID();
         arm.adjustPID();
 
