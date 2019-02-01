@@ -54,15 +54,19 @@ public class Arm {
 
         SmartDashboard.putNumber("Elbow Rotations", 0);
 
-        // SmartDashboard.putNumber("Wrist P", 0);
-		// SmartDashboard.putNumber("Wrist I", 0);
-		// SmartDashboard.putNumber("Wrist D", 0);
+        SmartDashboard.putNumber("Wrist P", 0);
+		SmartDashboard.putNumber("Wrist I", 0);
+		SmartDashboard.putNumber("Wrist D", 0);
     }
     
     public void adjustPID() {
 		elbowPID.setP(SmartDashboard.getNumber("Elbow P", 0));
 		elbowPID.setI(SmartDashboard.getNumber("Elbow I", 0));
         elbowPID.setD(SmartDashboard.getNumber("Elbow D", 0));
+
+        wristPID.setP(SmartDashboard.getNumber("Wrist P", 0));
+		wristPID.setI(SmartDashboard.getNumber("Wrist I", 0));
+        wristPID.setD(SmartDashboard.getNumber("Wrist D", 0));
 
         rotations = SmartDashboard.getNumber("Elbow Rotations", 0);
 
@@ -89,6 +93,8 @@ public class Arm {
         SmartDashboard.putNumber("ProcessVariable", elbowEncoder.getPosition());
         elbowPID.setReference(r, c);
     }
+
+    //public void setWristGoal(double r, ControlType c){}
 
     public void setWristMotor(double speed) {
         wristMotor.set(speed);
