@@ -23,7 +23,7 @@ public class ArmControl implements LoopModule {
     public void update(long delta){
 
         arm.initAdjustPID();
-
+        arm.adjustPID();
         arm.setWristPos(arm.rotations, ControlType.kPosition);
         
     }
