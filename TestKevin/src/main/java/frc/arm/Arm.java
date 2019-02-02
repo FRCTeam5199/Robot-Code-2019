@@ -5,6 +5,7 @@ import frc.robot.RobotMap;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkMaxLowLevel.ConfigParameter;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANPIDController;
@@ -18,13 +19,15 @@ public class Arm {
     private final CANPIDController elbowPID;
     private final CANPIDController wristPID;
     public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
-    public double rotations, ePos;
+    public double rotations, ePos, wPos, wristRatio, elbowRatio;
 
     public Arm() {
 
 
         //wrist motor gearbox 9:1
         //arm motor gearbox ?:1
+        wristRatio = 9.0;
+        //elbowRatio = ;
         kP = 0.1; 
         kI = 1e-4;
         kD = 1; 
@@ -45,6 +48,9 @@ public class Arm {
         elbowPID.setIZone(kIz);
         elbowPID.setFF(kFF);
         elbowPID.setOutputRange(kMinOutput, kMaxOutput);
+        
+        //elbowMotor.setParameter(ConfigParameter.kOutputRatio, elbowRatio);
+        wristMotor.setParameter(ConfigParameter.kOutputRatio, wristRatio);
     }
 
     public void initAdjustPID(){
@@ -69,7 +75,7 @@ public class Arm {
 		wristPID.setI(SmartDashboard.getNumber("Wrist I", 0));
         wristPID.setD(SmartDashboard.getNumber("Wrist D", 0));
 
-        rotations = SmartDashboard.getNumber("Elbow Rotations", 0);
+        rotations = SmartDashboard.getNumber("Wrist Rotations", 0);
 
 	}
     
