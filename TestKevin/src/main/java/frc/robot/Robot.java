@@ -39,14 +39,15 @@ public class Robot extends TimedRobot {
         nBroadcaster = new RemoteOutput("10.51.99.27", 5800);
         Robot.nBroadcaster.println("Starting up...");
         Xbox = new XBoxController(0);
+        Joy = new JoystickController(1);
         arm = new Arm();
 
-        armControl = new ArmControl(arm, Xbox);
+        armControl = new ArmControl(arm, Joy);
     }
 
     @Override
     public void teleopPeriodic() {
-        //goal: move the arm in a way that is not dumb
+        
         ClockRegulator cl = new ClockRegulator(50);
         BigLoop bigLoop = new BigLoop(cl);
 

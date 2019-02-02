@@ -2,9 +2,6 @@ package frc.arm;
 
 import frc.robot.Robot;
 import frc.robot.RobotMap;
-import frc.util.SparkMaxPID;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -14,8 +11,8 @@ import com.revrobotics.CANPIDController;
 
 public class Arm {
 
-    private final SparkMaxPID elbowMotor;
-    private final SparkMaxPID wristMotor;
+    private final CANSparkMax elbowMotor;
+    private final CANSparkMax wristMotor;
     private final CANEncoder elbowEncoder;
     private final CANEncoder wristEncoder;
     private final CANPIDController elbowPID;
@@ -25,6 +22,9 @@ public class Arm {
 
     public Arm() {
 
+
+        //wrist motor gearbox 9:1
+        //arm motor gearbox ?:1
         kP = 0.1; 
         kI = 1e-4;
         kD = 1; 
@@ -33,8 +33,8 @@ public class Arm {
         kMaxOutput = 1;
         kMinOutput = -1;
 
-        elbowMotor = new SparkMaxPID(RobotMap.elbowMotor, MotorType.kBrushless);
-        wristMotor = new SparkMaxPID(RobotMap.wristMotor, MotorType.kBrushless);
+        elbowMotor = new CANSparkMax(RobotMap.elbowMotor, MotorType.kBrushless);
+        wristMotor = new CANSparkMax(RobotMap.wristMotor, MotorType.kBrushless);
         elbowEncoder = elbowMotor.getEncoder();
         wristEncoder = wristMotor.getEncoder();
         elbowPID = elbowMotor.getPIDController();
@@ -52,11 +52,12 @@ public class Arm {
 		SmartDashboard.putNumber("Elbow I", 0);
         SmartDashboard.putNumber("Elbow D", 0);
 
-        SmartDashboard.putNumber("Elbow Rotations", 0);
-
         SmartDashboard.putNumber("Wrist P", 0);
 		SmartDashboard.putNumber("Wrist I", 0);
-		SmartDashboard.putNumber("Wrist D", 0);
+        SmartDashboard.putNumber("Wrist D", 0);
+        
+        SmartDashboard.putNumber("Elbow Rotations", 0);
+        SmartDashboard.putNumber("Wrist Rotations", 0);
     }
     
     public void adjustPID() {
@@ -72,12 +73,25 @@ public class Arm {
 
 	}
     
+    public void setElbowPos(double r, ControlType c){
+        SmartDashboard.putNumber("ProcessVariable", elbowEncoder.getPosition());
+        elbowPID.setReference(r, c);
+    }
+
+    public void setWristPos(double r, ControlType c){
+        SmartDashboard.putNumber("ProcessVariable", wristEncoder.getPosition());
+        wristPID.setReference(r,c);
+    }
+
     public void setElbowMotor(double speed) {
         elbowMotor.set(speed);
     }
 
+    public void setWristMotor(double speed) {
+        wristMotor.set(speed);
+    }
+
     public double getElbowPosition() {
-        SmartDashboard.putNumber("Elbow Position", ePos);
         return elbowEncoder.getPosition();
     }
 
@@ -87,17 +101,6 @@ public class Arm {
 
     public CANEncoder getElbowEncoder() {
         return elbowEncoder;
-    }
-
-    public void setElbowGoal(double r, ControlType c){
-        SmartDashboard.putNumber("ProcessVariable", elbowEncoder.getPosition());
-        elbowPID.setReference(r, c);
-    }
-
-    //public void setWristGoal(double r, ControlType c){}
-
-    public void setWristMotor(double speed) {
-        wristMotor.set(speed);
     }
 
     public double getWristPosition() {

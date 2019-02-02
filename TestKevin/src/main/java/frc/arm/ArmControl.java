@@ -1,17 +1,17 @@
 package frc.arm;
 
-import frc.controllers.XBoxController;
+import frc.controllers.JoystickController;
 import frc.interfaces.LoopModule;
 import com.revrobotics.ControlType;
 
 public class ArmControl implements LoopModule {
 
-    private final XBoxController Xbox;
+    private final JoystickController Joy;
     private final Arm arm;
 
-    public ArmControl(Arm arm, XBoxController Xbox){
+    public ArmControl(Arm arm, JoystickController Joy){
         this.arm = arm;
-        this.Xbox = Xbox;
+        this.Joy = Joy;
     }
 
     @Override
@@ -23,13 +23,8 @@ public class ArmControl implements LoopModule {
     public void update(long delta){
 
         arm.initAdjustPID();
-        arm.adjustPID();
 
-        arm.setElbowGoal(arm.rotations, ControlType.kPosition);
-        
-        if (Math.abs(Xbox.getStickLY()) > 0 ){
-            arm.setElbowMotor(Xbox.getStickLY());
-        }
+        arm.setWristPos(arm.rotations, ControlType.kPosition);
         
     }
 }
