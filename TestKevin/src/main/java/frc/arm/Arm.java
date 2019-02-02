@@ -80,12 +80,12 @@ public class Arm {
 	}
     
     public void setElbowPos(double r, ControlType c){
-        SmartDashboard.putNumber("ProcessVariable", elbowEncoder.getPosition());
+        SmartDashboard.putNumber("ProcessVariableE", elbowEncoder.getPosition());
         elbowPID.setReference(r, c);
     }
 
     public void setWristPos(double r, ControlType c){
-        SmartDashboard.putNumber("ProcessVariable", wristEncoder.getPosition());
+        SmartDashboard.putNumber("ProcessVariableW", wristEncoder.getPosition());
         wristPID.setReference(r,c);
     }
 
