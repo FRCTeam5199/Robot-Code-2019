@@ -23,6 +23,15 @@ public class Arm {
 
     public Arm() {
 
+        /* 3 lbs 4 ounces
+            Empirical Stall Torque: 2.6 Nm
+            Hall-Sensor Encoder Resolution: 42 counts per rev.
+            Empirical Motor Kv: 473 Kv
+            Empirical Free Speed: 5676 RPM
+            Empirical Stall Current: 105 A
+            d to center of mass: 19in
+            feed forward equation: Arm weight (from motor) * distance to arm cOm / Motor Stall Torque * Number of motors * gear ratio * cos(theta)
+        */
 
         //wrist motor gearbox 9:1
         //arm motor gearbox ?:1
@@ -32,7 +41,7 @@ public class Arm {
         kI = 1e-4;
         kD = 1; 
         kIz = 0; 
-        kFF = 0; 
+        kFF = ; 
         kMaxOutput = 1;
         kMinOutput = -1;
 
@@ -65,10 +74,19 @@ public class Arm {
     }
     
     public void adjustPID() {
-		elbowPID.setP(SmartDashboard.getNumber("Elbow P", 0));
-		elbowPID.setI(SmartDashboard.getNumber("Elbow I", 0));
-        elbowPID.setD(SmartDashboard.getNumber("Elbow D", 0));
+		double p = SmartDashboard.getNumber("Elbow P", 0);
+		double i = SmartDashboard.getNumber("Elbow I", 0);
+        double d = SmartDashboard.getNumber("Elbow D", 0);
+        double iz = SmartDashboard.getNumber("I Zone", 0);
+        double ff = SmartDashboard.getNumber("Feed Forward", 0);
 
+        if((p != kP)) { elbowPID.setP(p); kP = p; }
+        if((i != kI)) { elbowPID.setI(i); kI = i; }
+        if((d != kD)) { elbowPID.setD(d); kD = d; }
+        if((iz != kIz)) { elbowPID.setIZone(iz); kIz = iz; }
+        if((ff != kFF)) { elbowPID.setFF(ff); kFF = ff; }
+
+        }
         // wristPID.setP(SmartDashboard.getNumber("Wrist P", 0));
 		// wristPID.setI(SmartDashboard.getNumber("Wrist I", 0));
         // wristPID.setD(SmartDashboard.getNumber("Wrist D", 0));
