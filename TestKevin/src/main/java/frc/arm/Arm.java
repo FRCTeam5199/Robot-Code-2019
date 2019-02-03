@@ -62,8 +62,6 @@ public class Arm {
 		// SmartDashboard.putNumber("Wrist I", 0);
         // SmartDashboard.putNumber("Wrist D", 0);
         
-        SmartDashboard.putNumber("Elbow Rotations", 0);
-        // SmartDashboard.putNumber("Wrist Rotations", 0);
     }
     
     public void adjustPID() {
@@ -79,12 +77,14 @@ public class Arm {
     
     public void setElbowPos(double r, ControlType c){
         SmartDashboard.putNumber("Elbow Encoder", elbowEncoder.getPosition());
-        rotations = SmartDashboard.getNumber("Wrist Rotations", 0);
-        elbowPID.setReference(r, c);
+        SmartDashboard.putNumber("Elbow Rotations", 0);
+        rotations = SmartDashboard.getNumber("Elbow Rotations", 0);
+        elbowPID.setReference(r, c);    
     }
 
     public void setWristPos(double r, ControlType c){
         SmartDashboard.putNumber("Wrist Encoder", wristEncoder.getPosition());
+        // SmartDashboard.putNumber("Wrist Rotations", 0);
         wristPID.setReference(r,c);
     }
 
