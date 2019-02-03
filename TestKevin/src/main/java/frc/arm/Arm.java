@@ -54,16 +54,16 @@ public class Arm {
     }
 
     public void initAdjustPID(){
-		SmartDashboard.putNumber("Elbow P", 0);
-		SmartDashboard.putNumber("Elbow I", 0);
-        SmartDashboard.putNumber("Elbow D", 0);
+		SmartDashboard.putNumber("Elbow P", kP);
+		SmartDashboard.putNumber("Elbow I", kI);
+        SmartDashboard.putNumber("Elbow D", kD);
 
-        SmartDashboard.putNumber("Wrist P", 0);
-		SmartDashboard.putNumber("Wrist I", 0);
-        SmartDashboard.putNumber("Wrist D", 0);
+        // SmartDashboard.putNumber("Wrist P", 0);
+		// SmartDashboard.putNumber("Wrist I", 0);
+        // SmartDashboard.putNumber("Wrist D", 0);
         
         SmartDashboard.putNumber("Elbow Rotations", 0);
-        SmartDashboard.putNumber("Wrist Rotations", 0);
+        // SmartDashboard.putNumber("Wrist Rotations", 0);
     }
     
     public void adjustPID() {
@@ -71,21 +71,20 @@ public class Arm {
 		elbowPID.setI(SmartDashboard.getNumber("Elbow I", 0));
         elbowPID.setD(SmartDashboard.getNumber("Elbow D", 0));
 
-        wristPID.setP(SmartDashboard.getNumber("Wrist P", 0));
-		wristPID.setI(SmartDashboard.getNumber("Wrist I", 0));
-        wristPID.setD(SmartDashboard.getNumber("Wrist D", 0));
-
-        rotations = SmartDashboard.getNumber("Wrist Rotations", 0);
+        // wristPID.setP(SmartDashboard.getNumber("Wrist P", 0));
+		// wristPID.setI(SmartDashboard.getNumber("Wrist I", 0));
+        // wristPID.setD(SmartDashboard.getNumber("Wrist D", 0));
 
 	}
     
     public void setElbowPos(double r, ControlType c){
-        SmartDashboard.putNumber("ProcessVariableE", elbowEncoder.getPosition());
+        SmartDashboard.putNumber("Elbow Encoder", elbowEncoder.getPosition());
+        rotations = SmartDashboard.getNumber("Wrist Rotations", 0);
         elbowPID.setReference(r, c);
     }
 
     public void setWristPos(double r, ControlType c){
-        SmartDashboard.putNumber("ProcessVariableW", wristEncoder.getPosition());
+        SmartDashboard.putNumber("Wrist Encoder", wristEncoder.getPosition());
         wristPID.setReference(r,c);
     }
 
