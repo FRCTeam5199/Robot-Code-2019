@@ -22,7 +22,8 @@ public class ArmControl implements LoopModule {
 
         arm.initAdjustPID();
         arm.initWristPos();
-        
+        arm.setCoast();
+
     }
 
     @Override
@@ -32,6 +33,9 @@ public class ArmControl implements LoopModule {
         //arm.setWristPos(arm.rotations, ControlType.kPosition);
         SmartDashboard.putNumber("Elbow Encoder", arm.getElbowPosition());
         SmartDashboard.putNumber("Wrist Encoder", arm.getWristPosition());
-        arm.setWristPos();
+        // arm.setWristPos();
+        if((Math.abs(Joy.getYAxis())>0)){
+            arm.setElbowMotor(Joy.getYAxis());
+        }
     }
 }

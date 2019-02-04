@@ -77,6 +77,11 @@ public class Arm {
         wristMotor.setIdleMode(IdleMode.kCoast);
     }
 
+    public void setBreak(){
+        elbowMotor.setIdleMode(IdleMode.kBrake);
+        wristMotor.setIdleMode(IdleMode.kBrake);
+    }
+
     public void initAdjustPID(){
 		SmartDashboard.putNumber("Elbow P", kP);
 		SmartDashboard.putNumber("Elbow I", kI);
