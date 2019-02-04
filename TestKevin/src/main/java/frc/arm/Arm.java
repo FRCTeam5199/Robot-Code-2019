@@ -4,6 +4,7 @@ import frc.robot.Robot;
 import frc.robot.RobotMap;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMaxLowLevel.ConfigParameter;
 import com.revrobotics.CANEncoder;
@@ -19,29 +20,30 @@ public class Arm {
     private final CANPIDController elbowPID;
     private final CANPIDController wristPID;
     public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
-    public double rotations, ePos, wPos, wristRatio, elbowRatio;
+    public double rotations, wristRatio, elbowRatio;
 
     public Arm() {
 
-        /* 3 lbs 4 ounces
+        /*  weight: 3 lbs 4 ounces or 1.474175 kg
             Empirical Stall Torque: 2.6 Nm
             Hall-Sensor Encoder Resolution: 42 counts per rev.
             Empirical Motor Kv: 473 Kv
             Empirical Free Speed: 5676 RPM
             Empirical Stall Current: 105 A
-            d to center of mass: 19in
+            d to center of mass: 19 in or .4826 m
             feed forward equation: Arm weight (from motor) * distance to arm cOm / Motor Stall Torque * Number of motors * gear ratio * cos(theta)
         */
 
-        //wrist motor gearbox 9:1
-        //arm motor gearbox ?:1
-        wristRatio = 9.0;
-        //elbowRatio = ;
+        //wrist motor gearbox ?:1
+        //elbow motor gearbox 9:1
+        elbowRatio = 9.0;
+        wristRatio = 0;
         kP = 0.1; 
-        kI = 1e-4;
+        kI = 0;
         kD = 1; 
-        kIz = 0; 
-        kFF = ; 
+        kIz = 0;
+        kFF = 0; 
+        //kFF = (1.474 * 0.4826) / (2.6 * 1 * 9 * Math.cos(0)); 
         kMaxOutput = 1;
         kMinOutput = -1;
 
@@ -57,16 +59,29 @@ public class Arm {
         elbowPID.setIZone(kIz);
         elbowPID.setFF(kFF);
         elbowPID.setOutputRange(kMinOutput, kMaxOutput);
+
+        wristPID.setP(kP);
+        wristPID.setI(kI);
+        wristPID.setD(kD);
+        wristPID.setIZone(kIz);
+        wristPID.setFF(kFF);
+        wristPID.setOutputRange(kMinOutput, kMaxOutput);
         
-        //elbowMotor.setParameter(ConfigParameter.kOutputRatio, elbowRatio);
-        wristMotor.setParameter(ConfigParameter.kOutputRatio, wristRatio);
+        
+        elbowMotor.setParameter(ConfigParameter.kOutputRatio, elbowRatio);
+        //wristMotor.setParameter(ConfigParameter.kOutputRatio, wristRatio);
+    }
+
+    public void setCoast(){
+        elbowMotor.setIdleMode(IdleMode.kCoast);
+        wristMotor.setIdleMode(IdleMode.kCoast);
     }
 
     public void initAdjustPID(){
 		SmartDashboard.putNumber("Elbow P", kP);
 		SmartDashboard.putNumber("Elbow I", kI);
         SmartDashboard.putNumber("Elbow D", kD);
-
+        SmartDashboard.putNumber("Elbow FF", kFF);
         // SmartDashboard.putNumber("Wrist P", 0);
 		// SmartDashboard.putNumber("Wrist I", 0);
         // SmartDashboard.putNumber("Wrist D", 0);
@@ -78,15 +93,14 @@ public class Arm {
 		double i = SmartDashboard.getNumber("Elbow I", 0);
         double d = SmartDashboard.getNumber("Elbow D", 0);
         double iz = SmartDashboard.getNumber("I Zone", 0);
-        double ff = SmartDashboard.getNumber("Feed Forward", 0);
+        //double ff = SmartDashboard.getNumber("Feed Forward", 0);
 
         if((p != kP)) { elbowPID.setP(p); kP = p; }
         if((i != kI)) { elbowPID.setI(i); kI = i; }
         if((d != kD)) { elbowPID.setD(d); kD = d; }
         if((iz != kIz)) { elbowPID.setIZone(iz); kIz = iz; }
-        if((ff != kFF)) { elbowPID.setFF(ff); kFF = ff; }
+        //if((ff != kFF)) { elbowPID.setFF(ff); kFF = ff; }
 
-        }
         // wristPID.setP(SmartDashboard.getNumber("Wrist P", 0));
 		// wristPID.setI(SmartDashboard.getNumber("Wrist I", 0));
         // wristPID.setD(SmartDashboard.getNumber("Wrist D", 0));
@@ -94,20 +108,21 @@ public class Arm {
 	}
     
     public void setElbowPos(double r, ControlType c){
-        SmartDashboard.putNumber("Elbow Encoder", elbowEncoder.getPosition());
-        SmartDashboard.putNumber("Elbow Rotations", 0);
-        rotations = SmartDashboard.getNumber("Elbow Rotations", 0);
         elbowPID.setReference(r, c);    
     }
 
-    public void setWristPos(double r, ControlType c){
-        SmartDashboard.putNumber("Wrist Encoder", wristEncoder.getPosition());
-        // SmartDashboard.putNumber("Wrist Rotations", 0);
-        wristPID.setReference(r,c);
+    public void initWristPos(){
+        SmartDashboard.putNumber("Set Rotations", 0);
+    }
+    public void setWristPos(){
+        double rotations = SmartDashboard.getNumber("Set Rotations", 0);
+        wristPID.setReference(rotations, ControlType.kPosition);
+        //wristPID.setReference(r,c);
     }
 
     public void setElbowMotor(double speed) {
-        elbowMotor.set(speed);
+        //elbowMotor.set(speed);
+        elbowPID.setReference(speed, ControlType.kVelocity);
     }
 
     public void setWristMotor(double speed) {
