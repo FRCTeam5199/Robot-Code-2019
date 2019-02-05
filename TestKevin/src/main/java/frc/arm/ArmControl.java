@@ -10,7 +10,7 @@ public class ArmControl implements LoopModule {
     private final JoystickController Joy;
     private final Arm arm;
     private boolean override;
-    private double rotations, num;
+    private double rotations;
 
     public ArmControl(Arm arm, JoystickController Joy){
         this.arm = arm;
@@ -29,11 +29,11 @@ public class ArmControl implements LoopModule {
     @Override
     public void update(long delta){
 
-        //arm.adjustPID();
+        arm.adjustPID();
         //arm.setWristPos(arm.rotations, ControlType.kPosition);
         SmartDashboard.putNumber("Elbow Encoder", arm.getElbowPosition());
         SmartDashboard.putNumber("Wrist Encoder", arm.getWristPosition());
-        // arm.setWristPos();
+
         if((Math.abs(Joy.getYAxis())>0)){
             arm.setElbowMotor(Joy.getYAxis());
         }

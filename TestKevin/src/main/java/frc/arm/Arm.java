@@ -38,11 +38,11 @@ public class Arm {
         //elbow motor gearbox 9:1
         elbowRatio = 9.0;
         wristRatio = 0;
-        kP = 0.1; 
+        kP = 1; 
         kI = 0;
-        kD = 1; 
+        kD = 0; 
         kIz = 0;
-        kFF = 0; 
+        kFF = 0;
         //kFF = (1.474 * 0.4826) / (2.6 * 1 * 9 * Math.cos(0)); 
         kMaxOutput = 1;
         kMinOutput = -1;
@@ -119,15 +119,14 @@ public class Arm {
     public void initWristPos(){
         SmartDashboard.putNumber("Set Rotations", 0);
     }
-    public void setWristPos(){
-        double rotations = SmartDashboard.getNumber("Set Rotations", 0);
-        wristPID.setReference(rotations, ControlType.kPosition);
-        //wristPID.setReference(r,c);
+    public void setWristPos(double r, ControlType c){
+        // double rotations = SmartDashboard.getNumber("Set Rotations", 0);
+        // wristPID.setReference(rotations, ControlType.kPosition);
+        wristPID.setReference(r,c);
     }
 
     public void setElbowMotor(double speed) {
-        //elbowMotor.set(speed);
-        elbowPID.setReference(speed, ControlType.kVelocity);
+        elbowMotor.set(speed);
     }
 
     public void setWristMotor(double speed) {
