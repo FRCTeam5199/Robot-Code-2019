@@ -39,6 +39,10 @@ public class JoystickController {
 		return joy.getRawButtonPressed(n);
 	}
 
+	public boolean getButtonUp(int n){
+		return joy.getRawButtonReleased(n);
+	}
+
 	public boolean hatUp() {
 		int output = joy.getPOV();
 		return output == 315 || output == 0 || output == 45;
