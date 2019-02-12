@@ -9,6 +9,7 @@
 package frc.robot;
 
 import frc.controllers.XBoxController;
+import frc.drive.DriveControl;
 import frc.controllers.JoystickController;
 import frc.robot.RobotMap;
 import frc.networking.RemoteOutput;
@@ -28,6 +29,7 @@ public class Robot extends TimedRobot {
     public static RemoteOutput nBroadcaster;
     private Arm arm;
     private ArmControl armControl;
+    private DriveControl driveControl;
     private JoystickController Joy;
     private XBoxController Xbox;
 
@@ -49,6 +51,7 @@ public class Robot extends TimedRobot {
         BigLoop bigLoop = new BigLoop(cl);
 
         bigLoop.add(armControl);
+        bigLoop.add(driveControl);
 
         bigLoop.init();
         
