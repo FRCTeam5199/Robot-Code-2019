@@ -17,7 +17,8 @@ public class ArmControl implements LoopModule {
     private boolean wristUp = false;
     // this is in inches
     private double armLength = 20.75;
-    private double eleMaxHeight = ;
+    //you still need to find elevator max height once the motor comes in, make a method to do it from the SD
+    private double eleMaxHeight = 0;
     private double eleMinHeight = 0;
     private double wristAngle = 0;
     private boolean wristPos;
