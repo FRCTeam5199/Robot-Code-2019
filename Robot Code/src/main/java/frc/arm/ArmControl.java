@@ -10,7 +10,7 @@ import java.util.Vector;
 
 import com.revrobotics.ControlType;
 
-public class ArmControl implements LoopModule {
+public class ArmControl implements LoopModule { 
 
     private final JoystickController Joy;
     private final Arm arm;
@@ -102,7 +102,7 @@ public class ArmControl implements LoopModule {
         }
         SmartDashboard.putString("Arm Status", "Oh Shit");
     }
-    // minimize elevator movement : goal
+    // goal: minimize elevator movement 
     // check which has less ele movement
     // if same movement maximize angle movement
 
