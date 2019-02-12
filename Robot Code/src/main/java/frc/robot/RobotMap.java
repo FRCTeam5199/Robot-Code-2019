@@ -14,7 +14,7 @@ public class RobotMap {
 	public static final int gripperPiston = 1;
 
 
-	//CAN ID's
+	//CAN ID's (dont forget to set the controllers to these numbers, PDP is zero, PCM will be 11?)
 	public static final int wristMotor = 5;
 	public static final int eleMotor = 3;
 	public static final int elbowMotor = 4;
@@ -24,6 +24,8 @@ public class RobotMap {
 	public static final int	driveSlaveLeftA = 7;
 	public static final int driveSlaveRightB = 8;
 	public static final int	driveSlaveLeftB = 9;
+	public static final int CANGyro = 10;
+	// still need intake motor, winch motor, and liftdrive motor
 
 
 }
