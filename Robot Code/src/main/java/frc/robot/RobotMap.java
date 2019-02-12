@@ -24,8 +24,29 @@ public class RobotMap {
 	public static final int	driveSlaveLeftA = 7;
 	public static final int driveSlaveRightB = 8;
 	public static final int	driveSlaveLeftB = 9;
+
 	public static final int CANGyro = 10;
-	// still need intake motor, winch motor, and liftdrive motor
+
+	public static final int winchMotor = 11;
+	public static final int liftDriveMotor = 12;
+	public static final int intakeMotor = 13;
 
 
+	//Digital I/Os
+	public static final int liftLimitSwitch = 0;
+
+	//Control panel buttons
+	public static final int climberUp = 1;
+	public static final int climberDown = 2;
+	public static final int climberFWD = 3;
+	public static final int climberBWD = 4;
+
+	public static final int elevatorHatchHigh = 5;
+	public static final int elevatorHatchMid = 6;
+	public static final int elevatorHatchLow = 7;
+	public static final int elevatorHatchGround = 8;
+	public static final int elevatorCargoHigh = 9;
+	public static final int elevatorCargoMid = 10;
+	public static final int elevatorCargoLow = 11;
+	public static final int elevatorCargoGround = 12;
 }
