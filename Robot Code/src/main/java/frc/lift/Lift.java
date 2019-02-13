@@ -32,9 +32,9 @@ public class Lift{
         winchMotor.setNeutralMode(NeutralMode.Coast);
     }
     public void winchHover(boolean hover){
-        //this is not quite how the limit switch works and you need to create the "wich up button"
-        while(liftLimitSwitch.getButtonDown() && winchUpButton.getButtonDown()){
-            winchMotor.set(ControlMode.PercentOutput, 0.1);
-        }
+        
+        // while(liftLimitSwitch.getButtonDown() && winchUpButton.getButtonDown()){
+        //     winchMotor.set(ControlMode.PercentOutput, 0.1);
+        // }
     }
 }
