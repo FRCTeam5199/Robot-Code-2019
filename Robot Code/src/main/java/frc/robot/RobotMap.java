@@ -11,6 +11,7 @@ public class RobotMap {
 
 	//air
 	public static final int gearboxPiston = 3;
+	public static final int pokePistons = 2;
 	public static final int gripperPiston = 1;
 
 
