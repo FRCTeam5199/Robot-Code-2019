@@ -28,6 +28,7 @@ public class DriveControl implements LoopModule{
 
     @Override
     public void update(long delta){
+        base.gearChange(controller.getButton(6));
         tankControl();
     }
 
