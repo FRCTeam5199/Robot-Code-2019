@@ -9,6 +9,7 @@
 package frc.robot;
 
 import frc.controllers.XBoxController;
+import frc.drive.DriveBase;
 import frc.drive.DriveControl;
 import frc.controllers.JoystickController;
 import frc.robot.RobotMap;
@@ -28,6 +29,7 @@ public class Robot extends TimedRobot {
 
     public static RemoteOutput nBroadcaster;
     private Arm arm;
+    private DriveBase base;
     private ArmControl armControl;
     private DriveControl driveControl;
     private JoystickController Joy;
@@ -40,8 +42,10 @@ public class Robot extends TimedRobot {
         Xbox = new XBoxController(0);
         Joy = new JoystickController(1);
         arm = new Arm();
+        base = new DriveBase();
 
         armControl = new ArmControl(arm, Joy);
+        driveControl = new DriveControl(base, Xbox);
     }
 
     @Override
