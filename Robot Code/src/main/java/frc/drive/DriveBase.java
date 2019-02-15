@@ -11,7 +11,7 @@ public class DriveBase {
 
     private final CANSparkMax leaderL, leaderR, SlaveL, SlaveR, SlaveL2, SlaveR2;
 
-    private final Solenoid shifter;
+    private final Solenoid shiftUp, shiftDown;
     private final PigeonIMU gyro;
     private double[] gyroXYZ;
 
@@ -28,7 +28,8 @@ public class DriveBase {
         SlaveR.follow(leaderR);
         SlaveR2.follow(leaderR);
 
-        shifter = new Solenoid(RobotMap.gearboxPiston);
+        shiftUp = new Solenoid(RobotMap.gearboxPistonA);
+        shiftDown = new Solenoid(RobotMap.gearboxPistonB);
         // create CANEncoder objects from the leader and return WPI encoders in the get
         // encoder methods by either
         // making a new class that extends the CANEncoder by implementing the wpi
@@ -45,6 +46,7 @@ public class DriveBase {
         leaderL.set(-left);
         leaderR.set(right);
         // left is reversed
+  
     }
 
     public double[] getGyro() {
@@ -61,7 +63,8 @@ public class DriveBase {
     // }
 
     public void gearChange(boolean b) {
-        shifter.set(b);
+        shiftUp.set(b);
+        shiftDown.set(!b);
     }
 
 }
