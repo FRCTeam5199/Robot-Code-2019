@@ -8,33 +8,36 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 public class Lift{
     private VictorSPX winchMotor;
     private VictorSPX liftDriveMotor;
-    private DigitalInput liftLimitSwitch;
-
+    public DigitalInput liftLimitSwitch;
 
     public Lift(){
         winchMotor = new VictorSPX(RobotMap.winchMotor);
         liftDriveMotor = new VictorSPX(RobotMap.liftDriveMotor);
         liftLimitSwitch = new DigitalInput(RobotMap.liftLimitSwitch);
     }
-    public void setLiftDrive(boolean fwd, boolean bwd){
-        if(fwd){
+    public void setLiftDriveFWD(){
             liftDriveMotor.set(ControlMode.PercentOutput, .5);
-        }
-        if(bwd){
-            liftDriveMotor.set(ControlMode.PercentOutput, -.5);
-        }
     }
-    public void winchUp(boolean up){
+    public void setLiftDriveBWD(){
+            liftDriveMotor.set(ControlMode.PercentOutput, -.5);
+    }
+    public void winchUp(){
         winchMotor.set(ControlMode.PercentOutput, .5);
     }
-    public void winchDown(boolean down){
+    public void winchDown(){
         winchMotor.set(ControlMode.PercentOutput, 0);
         winchMotor.setNeutralMode(NeutralMode.Coast);
     }
-    public void winchHover(boolean hover){
-        
-        // while(liftLimitSwitch.getButtonDown() && winchUpButton.getButtonDown()){
-        //     winchMotor.set(ControlMode.PercentOutput, 0.1);
-        // }
+    public void winchHover(){
+        //Currently enters hover mode if the limit switch returns false. The switch should return false if it is closed. If this doesnt do what we want,
+        // the switch probabaly returns false when open. In that case, remove the '!'
+        while(!liftLimitSwitch.get()){
+            winchMotor.set(ControlMode.PercentOutput, 0);
+            try {
+                Thread.sleep(500);
+            } catch(InterruptedException e) {
+                System.out.println("Man, I dont EVEN have an idea.");
+            }
+        }
     }
 }
