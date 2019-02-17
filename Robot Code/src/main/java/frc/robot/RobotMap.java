@@ -3,12 +3,6 @@ package frc.robot;
 public class RobotMap {
 	private static final int mxpOffset = 10;
 
-	//inches per encoder pulse
-	public final static double elevatorIPP = (Math.PI * 1.432d * 2) / (1024d * 9d);
-	// public final static double elbowIPP;
-	// public final static double wristIPP;
-	public static final double wheelEncoderIPP = 3 * 6 * Math.PI / 2048;
-
 	//air
 	public static final int gearboxPistonB = 0;
 	public static final int gearboxPistonA = 1;
@@ -35,7 +29,10 @@ public class RobotMap {
 
 
 	//Digital I/Os
-	public static final int liftLimitSwitch = 0;
+	public static final int liftLimitSwitch = 9;
+	public static final int wristLimitSwitch = 8;
+	public static final int elbowLimitSwitch = 7;
+
 
 	//Control panel buttons
 	public static final int climberUp = 1;
