@@ -74,7 +74,7 @@ public class ArmControl implements LoopModule {
 
     }
 
-    private double moveIterator(double j){
+    private double angleIncrementer(double j){
         if(System.currentTimeMillis() > lastTime + 10){
             if(j>0){
                 elbowTarget++;
@@ -165,7 +165,7 @@ public class ArmControl implements LoopModule {
         this.findElbowAngle();
 
         if(Math.abs(Joy.getYAxis()) > 0){
-            this.moveArm(moveIterator(Joy.getYAxis()));
+            this.moveArm(angleIncrementer(Joy.getYAxis()));
         }
 
         ////temp
