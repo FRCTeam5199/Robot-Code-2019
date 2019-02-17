@@ -11,6 +11,7 @@ public class SparkMaxPID extends CANSparkMax implements PIDOutput, PIDSource{
 
     public SparkMaxPID(int deviceID, com.revrobotics.CANSparkMaxLowLevel.MotorType type) {
         super(deviceID, type);
+        sourceType = PIDSourceType.kDisplacement;
     }
 
 	@Override
