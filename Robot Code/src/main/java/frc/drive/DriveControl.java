@@ -30,6 +30,7 @@ public class DriveControl implements LoopModule{
     public void update(long delta){
         base.gearChange(controller.getButton(6));
         tankControl();
+        base.getGyro();
     }
 
     public void tankControl() {

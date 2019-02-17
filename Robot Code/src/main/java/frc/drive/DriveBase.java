@@ -3,6 +3,7 @@ package frc.drive;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.ctre.phoenix.sensors.PigeonIMU;
+import com.ctre.phoenix.sensors.*;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Solenoid;
 import frc.robot.RobotMap;
@@ -30,6 +31,7 @@ public class DriveBase {
 
         shiftUp = new Solenoid(RobotMap.gearboxPistonA);
         shiftDown = new Solenoid(RobotMap.gearboxPistonB);
+        
         // create CANEncoder objects from the leader and return WPI encoders in the get
         // encoder methods by either
         // making a new class that extends the CANEncoder by implementing the wpi
@@ -46,21 +48,25 @@ public class DriveBase {
         leaderL.set(-left);
         leaderR.set(right);
         // left is reversed
-  
+   
     }
 
     public double[] getGyro() {
-        gyro.getRawGyro(gyroXYZ);
+        //gyro.getRawGyro(gyroXYZ);
+        gyro.getAccumGyro(gyroXYZ);
+        //gyro.getFusedHeading();
+        //System.out.println(gyroXYZ.toString());
+        //System.out.println(gyro.getFusedHeading());
         return gyroXYZ;
     }
 
-    // public Encoder getEncoderL() {
+    public double getEncoderLPos() {
+        return leaderL.getEncoder().getPosition();
+    }
 
-    // }
-
-    // public Encoder getEncoderR() {
-
-    // }
+    public double getEncoderRPos() {
+        return leaderR.getEncoder().getPosition();
+    }
 
     public void gearChange(boolean b) {
         shiftUp.set(b);
