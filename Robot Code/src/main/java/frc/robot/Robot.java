@@ -11,6 +11,9 @@ package frc.robot;
 import frc.controllers.XBoxController;
 import frc.drive.DriveBase;
 import frc.drive.DriveControl;
+import frc.lift.Lift;
+import frc.lift.LiftControl;
+import frc.controllers.ButtonPanel;
 import frc.controllers.JoystickController;
 import frc.robot.RobotMap;
 import frc.networking.RemoteOutput;
@@ -19,7 +22,6 @@ import frc.arm.Arm;
 import frc.arm.ArmControl;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.Joystick;
 
 
 /**
@@ -29,10 +31,13 @@ public class Robot extends TimedRobot {
 
     public static RemoteOutput nBroadcaster;
     private Arm arm;
+    private Lift lift;
     private DriveBase base;
     private ArmControl armControl;
+    private LiftControl liftControl;
     private DriveControl driveControl;
     private JoystickController Joy;
+    private ButtonPanel panel;
     private XBoxController Xbox;
 
     @Override
@@ -41,10 +46,13 @@ public class Robot extends TimedRobot {
         Robot.nBroadcaster.println("Starting up...");
         Xbox = new XBoxController(0);
         Joy = new JoystickController(1);
+        panel = new ButtonPanel(2);
         arm = new Arm();
+        lift = new Lift();
         base = new DriveBase();
 
         armControl = new ArmControl(arm, Joy);
+        liftControl = new LiftControl(lift, Joy);
         driveControl = new DriveControl(base, Xbox);
     }
 
@@ -55,6 +63,7 @@ public class Robot extends TimedRobot {
         BigLoop bigLoop = new BigLoop(cl);
 
         bigLoop.add(armControl);
+        bigLoop.add(liftControl);
         bigLoop.add(driveControl);
 
         bigLoop.init();

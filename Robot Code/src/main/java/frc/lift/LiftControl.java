@@ -2,7 +2,7 @@ package frc.lift;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.controllers.ButtonPanel;
-
+import frc.controllers.JoystickController;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.ControlType;
@@ -12,15 +12,24 @@ import frc.interfaces.LoopModule;
 
 public class LiftControl implements LoopModule{
     private final Lift lift;
-    private final ButtonPanel button;
+    //private final ButtonPanel panel;
+    //temp
+    private JoystickController Joy;
+    //
     private boolean winchUpButton = false;
     private boolean winchDownButton = false;
     private boolean liftDriveFWD = false;
     private boolean liftDriveBWD = false;
 
-    public LiftControl(Lift lift, ButtonPanel button){
+    // public LiftControl(Lift lift, ButtonPanel panel){
+    //     this.lift = lift;
+    //     this.panel = panel;
+    // }
+
+    //temp 
+    public LiftControl(Lift lift, JoystickController Joy){
         this.lift = lift;
-        this.button = button;
+        this.Joy = Joy;
     }
 
     public void init(){
@@ -37,17 +46,38 @@ public class LiftControl implements LoopModule{
     }
     @Override
     public void update(long delta){
-        if(button.getButtonDown(RobotMap.climberUp)){
+        // if(panel.getButtonDown(RobotMap.climberUp)){
+        //     liftUp();
+        // }
+        // if(panel.getButtonDown(RobotMap.climberDown)){
+        //     liftDown();
+        // }
+        // if(panel.getButtonDown(RobotMap.climberFWD)){
+        //     lift.setLiftDriveFWD();
+        // }
+        // if(panel.getButtonDown(RobotMap.climberBWD)){
+        //     lift.setLiftDriveBWD();
+        // }
+
+        ////temp (needed to override limit switch stuff && no cntrl panel)
+
+        if(Joy.getButtonDown(8)){
             liftUp();
         }
-        if(button.getButtonDown(RobotMap.climberDown)){
+        else if(Joy.getButtonUp(8)){
+            lift.winchNoMove();
+        }
+        if(Joy.getButtonDown(7)){
             liftDown();
         }
-        if(button.getButtonDown(RobotMap.climberFWD)){
+        else if (Joy.getButtonUp(7)){
+            lift.winchNoMove();
+        }
+        if(Joy.getButtonDown(9)){
             lift.setLiftDriveFWD();
         }
-        if(button.getButtonDown(RobotMap.climberBWD)){
-            lift.setLiftDriveBWD();
+        else if(Joy.getButtonUp(9)){
+            lift.setLiftDriveOff();
         }
     }
 }

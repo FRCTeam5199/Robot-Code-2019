@@ -1,5 +1,7 @@
 package frc.lift;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.revrobotics.CANSparkMax.IdleMode;
+
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.RobotMap;
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -18,14 +20,23 @@ public class Lift{
     public void setLiftDriveFWD(){
             liftDriveMotor.set(ControlMode.PercentOutput, .5);
     }
+    public void setLiftDriveOff(){
+        liftDriveMotor.set(ControlMode.PercentOutput, 0);
+    }
     public void setLiftDriveBWD(){
             liftDriveMotor.set(ControlMode.PercentOutput, -.5);
     }
     public void winchUp(){
-        winchMotor.set(ControlMode.PercentOutput, .5);
+        winchMotor.set(ControlMode.PercentOutput, .7);
+        winchMotor.setNeutralMode(NeutralMode.Brake);
     }
-    public void winchDown(){
+    public void winchNoMove(){
         winchMotor.set(ControlMode.PercentOutput, 0);
+        winchMotor.setNeutralMode(NeutralMode.Brake);
+    }
+
+    public void winchDown(){
+        winchMotor.set(ControlMode.PercentOutput, -.1);
         winchMotor.setNeutralMode(NeutralMode.Coast);
     }
     public void winchHover(){
