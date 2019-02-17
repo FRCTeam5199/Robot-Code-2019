@@ -19,12 +19,20 @@ public class ArmControl implements LoopModule {
     private double armLength = 20.75;
     //you still need to find elevator max height once the motor comes in, make a method to do it from the SD
     private double eleMaxHeight = 0;
+    // --- IMPORTANT!!!
     private double eleMinHeight = 0;
+    private double elbowMinAngle = 0;
+    //measure this to be @ somewhere
+    private double elbowMaxAngle = 100;
+    // ---
     private double wristAngle = 0;
-    private boolean wristPos;
+    private double elbowAngle = 0;
+    private double elbowTarget = 0;
+    private long lastTime;
+    private boolean wristPos, claws;
     private Vector2 armOffset = new Vector2(12.125, 20.5);
     private Interpolator eleInterpolator, elbowInterpolator, wristInterpolator;
-    private Vector2 rest, low, cargoship, cargo1, cargo2, cargo3, max;
+    private Vector2 stow, low, mid, high, cargoship, cargo1, cargo2, cargo3, max;
 
     public ArmControl(Arm arm, JoystickController Joy) {
         this.arm = arm;
@@ -38,9 +46,26 @@ public class ArmControl implements LoopModule {
 
     @Override
     public void init() {
-        armGoTo(rest);
-        wristInterpolator.init(arm.getWristPosition(), 0);
+        arm.enableArmPID();
 
+        elbowAngle = 0;
+        wristAngle = 0;
+        elbowTarget = elbowAngle;
+
+        lastTime = System.currentTimeMillis();
+
+        arm.setBeak(false);
+        arm.setPokers(false);
+        claws = true;
+
+        // armGoTo(rest);
+        // wristInterpolator.init(arm.getWristPosition(), 0);
+
+    }
+
+    //temp
+    private void findElbowAngle(){
+        SmartDashboard.putNumber("Elbow Angle", elbowAngle);
     }
 
     private void moveTo(double h, double a) {
@@ -49,7 +74,34 @@ public class ArmControl implements LoopModule {
 
     }
 
-    private void wristFlip() {
+    private double moveIterator(double j){
+        if(System.currentTimeMillis() > lastTime + 10){
+            if(j>0){
+                elbowTarget++;
+            }
+            else if (j<0){
+                elbowTarget--;
+            }
+            lastTime = System.currentTimeMillis();
+            elbowAngle = arm.getElbowPosition();
+            return elbowTarget;
+        }
+        else {
+            elbowAngle = arm.getElbowPosition();
+            return arm.getElbowPosition();
+        }
+    }
+
+    private void moveArm(double d){
+
+        if(elbowTarget < elbowMaxAngle && elbowTarget > elbowMinAngle){
+            arm.setElbow(d);
+            arm.setWrist(-d);
+        }
+
+    }
+
+/*     private void wristFlip() {
         wristUp = !wristUp;
         if (wristUp) {
             wristInterpolator.init(arm.getWristPosition(), 90);
@@ -57,9 +109,9 @@ public class ArmControl implements LoopModule {
             wristInterpolator.init(arm.getWristPosition(), 0);
         }
         
-    }
+    } */
 
-    public void armGoTo(Vector2 vGlobal) {
+/*     public void armGoTo(Vector2 vGlobal) {
         SmartDashboard.putString("Arm Status", "We Good");
         Vector2 v = Vector2.add(vGlobal, armOffset);
         if (v.getX() < armLength) {
@@ -105,29 +157,52 @@ public class ArmControl implements LoopModule {
     }
     // goal: minimize elevator movement 
     // check which has less ele movement
-    // if same movement maximize angle movement
+    // if same movement maximize angle movement */
 
     @Override
     public void update(long delta) {
 
-        if (Joy.getButtonDown(2)) {
-        }
-        if (Joy.getButtonDown(9)) {
-            armGoTo(rest);
-        }
-        if (Joy.getButtonDown(11)) {
-            armGoTo(low);
-        }
-        if (Joy.getButtonDown(12)) {
-            armGoTo(cargoship);
-        }
-        if (Joy.getButtonDown(10)) {
-            armGoTo(cargo1);
+        this.findElbowAngle();
+
+        if(Math.abs(Joy.getYAxis()) > 0){
+            this.moveArm(moveIterator(Joy.getYAxis()));
         }
 
-        wristFlip();
-        arm.setWrist(wristInterpolator.get() - elbowInterpolator.get());
-        arm.setEle(eleInterpolator.get());
-        arm.setElbow(elbowInterpolator.get());
+        ////temp
+        // if(Math.abs(Joy.getYAxis()) > 0){
+        //     arm.moveElbow(Joy.getYAxis());
+        // }
+        // if (Joy.getHat() == -1){
+        //     arm.moveWrist(0);
+        // } 
+        // else if (Joy.getHat() == 0){
+        //     arm.moveWrist(0.25);
+        // }
+        // else if (Joy.getHat() == 180){
+        //     arm.moveWrist(-.25);
+        // }
+
+        if(Joy.getButtonDown(3) || Joy.getButtonDown(4)){
+            arm.runIntake(.7);
+        }
+        else if(Joy.getButtonUp(3) || Joy.getButtonUp(4)){
+            arm.runIntake(0);
+        }
+        if (Joy.getButtonDown(5) || Joy.getButtonDown(6)) {
+            arm.runIntake(-.7);
+        }
+        else if (Joy.getButtonUp(5) || Joy.getButtonUp(6)){
+            arm.runIntake(0);
+        }
+        if (Joy.getButtonDown(1) && claws){
+            arm.setBeak(true);
+            claws = false;
+        }
+        else if (Joy.getButtonUp(1)){
+            arm.setBeak(false);
+            claws = true;
+        }
+        arm.setPokers(Joy.getButton(2));
+        
     }
 }
