@@ -1,6 +1,7 @@
 package frc.arm;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.controllers.ButtonPanel;
 import frc.controllers.JoystickController;
 import frc.interfaces.LoopModule;
 import frc.motion.Interpolator;
@@ -13,11 +14,12 @@ import com.revrobotics.ControlType;
 public class ArmControl implements LoopModule { 
 
     private final JoystickController Joy;
+    private final ButtonPanel panel;
     private final Arm arm;
     private boolean wristUp = false;
     // this is in inches
     private double armLength = 20.75;
-    //you still need to find elevator max height once the motor comes in, make a method to do it from the SD
+    //you still need to find elevator max height once the elevator and motor are put togehter, make a method to do it from the SD
     private double eleMaxHeight = 0;
     // --- IMPORTANT!!!
     private double eleMinHeight = 0;
@@ -26,21 +28,24 @@ public class ArmControl implements LoopModule {
     private double elbowMaxAngle = 100;
     // ---
     private double wristAngle = 0;
+    private double hatMod = 0;
     private double elbowAngle = 0;
     private double elbowTarget = 0;
     private long lastTime;
     private boolean wristPos, claws;
     private Vector2 armOffset = new Vector2(12.125, 20.5);
-    private Interpolator eleInterpolator, elbowInterpolator, wristInterpolator;
+    private Interpolator eleInterpolator, elbowInterpolator, wristInterpolator, armInterpolator;
     private Vector2 stow, low, mid, high, cargoship, cargo1, cargo2, cargo3, max;
 
-    public ArmControl(Arm arm, JoystickController Joy) {
+    public ArmControl(Arm arm, JoystickController Joy, ButtonPanel panel) {
         this.arm = arm;
         this.Joy = Joy;
+        this.panel = panel;
 
         eleInterpolator = new Interpolator(3);
         elbowInterpolator = new Interpolator(25);
         wristInterpolator = new Interpolator(25);
+        armInterpolator = new Interpolator(25);
 
     }
 
@@ -48,15 +53,12 @@ public class ArmControl implements LoopModule {
     public void init() {
         arm.enableArmPID();
 
-        elbowAngle = 0;
-        wristAngle = 0;
+        // elbowAngle = 0;
+        // wristAngle = 0;
+        hatMod = 0;
         elbowTarget = elbowAngle;
 
         lastTime = System.currentTimeMillis();
-
-        arm.setBeak(false);
-        arm.setPokers(false);
-        claws = true;
 
         // armGoTo(rest);
         // wristInterpolator.init(arm.getWristPosition(), 0);
@@ -64,30 +66,33 @@ public class ArmControl implements LoopModule {
     }
 
     //temp
-    private void findElbowAngle(){
+    private void findArmPositions(){
         SmartDashboard.putNumber("Elbow Angle", elbowAngle);
+        SmartDashboard.putNumber("Wrist Angle", wristAngle);
     }
 
-    private void moveTo(double h, double a) {
-        eleInterpolator.init(arm.getElePosition(), h);
-        elbowInterpolator.init(arm.getElbowPosition(), a);
+    // private void posInterpolator(double h, double a) {
+    //     eleInterpolator.init(arm.getElePosition(), h);
+    //     elbowInterpolator.init(arm.getElbowPosition(), a);
 
-    }
+    // }
 
     private double angleIncrementer(double j){
         if(System.currentTimeMillis() > lastTime + 10){
-            if(j>0){
-                elbowTarget++;
+            if(j>0.1 && elbowTarget < elbowMaxAngle){
+                elbowTarget += 0.5;
             }
-            else if (j<0){
-                elbowTarget--;
+            else if (j<-0.1 && elbowTarget > elbowMinAngle){
+                elbowTarget -= 0.5;
             }
             lastTime = System.currentTimeMillis();
             elbowAngle = arm.getElbowPosition();
+            wristAngle = arm.getWristPosition();
             return elbowTarget;
         }
         else {
             elbowAngle = arm.getElbowPosition();
+            wristAngle = arm.getWristPosition();
             return arm.getElbowPosition();
         }
     }
@@ -96,8 +101,40 @@ public class ArmControl implements LoopModule {
 
         if(elbowTarget < elbowMaxAngle && elbowTarget > elbowMinAngle){
             arm.setElbow(d);
-            arm.setWrist(-d);
+            arm.setWrist(-d + hatMod);
         }
+    }
+
+    private void wristIncrease(){
+        if (Joy.getHat() == -1){
+            hatMod += 0;
+        } 
+        else if (Joy.getHat() == 0){
+            hatMod++;
+        }
+        else if (Joy.getHat() == 180){
+            hatMod--;
+        }
+    }
+
+    //the new "armGoTo"
+    private void armGoTo(){
+        if (panel.getButton(4) && armInterpolator.isFinished()){
+            armInterpolator.init(arm.getElbowPosition(), 0);
+            this.moveArm(armInterpolator.get());
+        }
+        else if (panel.getButton(3) && armInterpolator.isFinished()){
+            armInterpolator.init(arm.getElbowPosition(), 24);
+            this.moveArm(armInterpolator.get());
+            hatMod = 0;
+        }
+        else if (panel.getButton(9) && armInterpolator.isFinished()){
+            armInterpolator.init(arm.getElbowPosition(), 24);
+            this.moveArm(armInterpolator.get());
+            //idk what angle so 50 is a guess
+            hatMod = 50;
+        }
+
 
     }
 
@@ -162,47 +199,18 @@ public class ArmControl implements LoopModule {
     @Override
     public void update(long delta) {
 
-        this.findElbowAngle();
+        this.findArmPositions();
+        this.armGoTo();
 
-        if(Math.abs(Joy.getYAxis()) > 0){
+        if(Math.abs(Joy.getYAxis()) > 0 || Joy.getHat() != -1){
             this.moveArm(angleIncrementer(Joy.getYAxis()));
+            this.wristIncrease();
         }
 
         ////temp
         // if(Math.abs(Joy.getYAxis()) > 0){
         //     arm.moveElbow(Joy.getYAxis());
         // }
-        // if (Joy.getHat() == -1){
-        //     arm.moveWrist(0);
-        // } 
-        // else if (Joy.getHat() == 0){
-        //     arm.moveWrist(0.25);
-        // }
-        // else if (Joy.getHat() == 180){
-        //     arm.moveWrist(-.25);
-        // }
-
-        if(Joy.getButtonDown(3) || Joy.getButtonDown(4)){
-            arm.runIntake(.7);
-        }
-        else if(Joy.getButtonUp(3) || Joy.getButtonUp(4)){
-            arm.runIntake(0);
-        }
-        if (Joy.getButtonDown(5) || Joy.getButtonDown(6)) {
-            arm.runIntake(-.7);
-        }
-        else if (Joy.getButtonUp(5) || Joy.getButtonUp(6)){
-            arm.runIntake(0);
-        }
-        if (Joy.getButtonDown(1) && claws){
-            arm.setBeak(true);
-            claws = false;
-        }
-        else if (Joy.getButtonUp(1)){
-            arm.setBeak(false);
-            claws = true;
-        }
-        arm.setPokers(Joy.getButton(2));
         
     }
 }
