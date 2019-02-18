@@ -38,7 +38,7 @@ public class Arm {
     private double kP, kI, kD, kFF;
 
     public Arm(){
-
+        // these ratios are a little off
         elbowRatio = 720/343;
         wristRatio = 120/49;
         //                    |
@@ -54,7 +54,7 @@ public class Arm {
         wristMotor = new SparkMaxPID(RobotMap.wristMotor, MotorType.kBrushless);
         eleMotor = new SparkMaxPID(RobotMap.eleMotor, MotorType.kBrushless);
 
-        elbowPID = new PIDController(.1,0,0, elbowMotor, elbowMotor);
+        elbowPID = new PIDController(.1,0,0,0, elbowMotor, elbowMotor);
         wristPID = new PIDController(.1,0,0, wristMotor, wristMotor);
         elePID = new PIDController(.1,0,0,0, eleMotor, eleMotor);
        
@@ -73,12 +73,12 @@ public class Arm {
 		double p = SmartDashboard.getNumber("Elbow P", 0);
 		double i = SmartDashboard.getNumber("Elbow I", 0);
         double d = SmartDashboard.getNumber("Elbow D", 0);
-        // double ff = SmartDashboard.getNumber("Elbow FF", 0);
+        double ff = SmartDashboard.getNumber("Elbow FF", 0);
 
         if((p != kP)) { elbowPID.setP(p); kP = p; }
         if((i != kI)) { elbowPID.setI(i); kI = i; }
         if((d != kD)) { elbowPID.setD(d); kD = d; }
-        // if((ff != kFF)) { elbowPID.setFF(ff); kFF = ff;}
+        if((ff != kFF)) { elbowPID.setF(ff); kFF = ff;}
 
         //add the rest
 
