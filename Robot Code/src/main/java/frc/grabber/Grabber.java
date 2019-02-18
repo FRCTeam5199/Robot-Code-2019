@@ -3,6 +3,7 @@ package frc.grabber;
 import edu.wpi.first.wpilibj.Solenoid;
 import frc.robot.RobotMap;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
@@ -25,6 +26,10 @@ public class Grabber {
 
     public void setPokers(boolean b) {
         pokePistons.set(b);
+    }
+
+    public void setIntake(double n) {
+        intake.set(ControlMode.PercentOutput, n);
     }
     
 }
