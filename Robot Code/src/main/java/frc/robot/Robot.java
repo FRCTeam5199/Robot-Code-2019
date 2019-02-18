@@ -9,6 +9,7 @@
 package frc.robot;
 
 import frc.controllers.XBoxController;
+import frc.vision.Camera;
 import frc.drive.DriveBase;
 import frc.drive.DriveControl;
 import frc.lift.Lift;
@@ -30,6 +31,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends TimedRobot {
 
     public static RemoteOutput nBroadcaster;
+    public static Camera camera;
     private Arm arm;
     private Lift lift;
     private DriveBase base;
@@ -44,6 +46,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         nBroadcaster = new RemoteOutput("10.51.99.27", 5800);
         Robot.nBroadcaster.println("Starting up...");
+        camera = new Camera();
         Xbox = new XBoxController(0);
         Joy = new JoystickController(1);
         panel = new ButtonPanel(2);
@@ -51,7 +54,7 @@ public class Robot extends TimedRobot {
         lift = new Lift();
         base = new DriveBase();
 
-        armControl = new ArmControl(arm, Joy);
+        armControl = new ArmControl(arm, Joy, panel);
         liftControl = new LiftControl(lift, Joy);
         driveControl = new DriveControl(base, Xbox);
     }
