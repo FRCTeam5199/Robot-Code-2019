@@ -164,4 +164,12 @@ public class Arm {
         return eleMotor.getEncoder().getPosition()*eleRatio;
     }
 
+    public void setHatchIntake(double n) {
+        intakeMotor.set(ControlMode.PercentOutput, -n);
+    }
+
+    public void setCargoIntake(double n) {
+        intakeMotor.set(ControlMode.PercentOutput, n);
+    }
+
 }
