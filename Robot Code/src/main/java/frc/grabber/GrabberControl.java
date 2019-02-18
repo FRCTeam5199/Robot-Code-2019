@@ -14,6 +14,7 @@ public class GrabberControl implements LoopModule {
         this.grabber = grabber;
         this.Joy = Joy;
         grabberOpen = false;
+
     }
 
     @Override
@@ -23,18 +24,26 @@ public class GrabberControl implements LoopModule {
 
     @Override
     public void update(long delta) {
-        if (Joy.hatUp()) {
-            grabber.setIntake(-1);
-        } else if (Joy.hatDown()) {
-            grabber.setIntake(1);
-        } else {
+        if(Joy.getButtonDown(3) || Joy.getButtonDown(4)){
+            grabber.setIntake(.7);
+        }
+        else if(Joy.getButtonUp(3) || Joy.getButtonUp(4)){
             grabber.setIntake(0);
         }
-
-        if (Joy.getButtonDown(1)) {
-            grabberOpen = !grabberOpen;
+        if (Joy.getButtonDown(5) || Joy.getButtonDown(6)) {
+            grabber.setIntake(-.7);
         }
-
-        grabber.setGrabber(grabberOpen);
-    }
+        else if (Joy.getButtonUp(5) || Joy.getButtonUp(6)){
+            grabber.setIntake(0);
+        }
+        if (Joy.getButtonDown(1) && grabberOpen){
+            grabber.setGrabber(true);
+            grabberOpen = true;
+        }
+        else if (Joy.getButtonUp(1)){
+            grabber.setGrabber(false);
+            grabberOpen = true;
+        }
+        grabber.setPokers(Joy.getButton(2));
+}
 }
