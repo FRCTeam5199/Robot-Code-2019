@@ -182,27 +182,7 @@ public class ArmControl implements LoopModule {
         //     arm.moveWrist(-.25);
         // }
 
-        if(Joy.getButtonDown(3) || Joy.getButtonDown(4)){
-            arm.runIntake(.7);
-        }
-        else if(Joy.getButtonUp(3) || Joy.getButtonUp(4)){
-            arm.runIntake(0);
-        }
-        if (Joy.getButtonDown(5) || Joy.getButtonDown(6)) {
-            arm.runIntake(-.7);
-        }
-        else if (Joy.getButtonUp(5) || Joy.getButtonUp(6)){
-            arm.runIntake(0);
-        }
-        if (Joy.getButtonDown(1) && claws){
-            arm.setBeak(true);
-            claws = false;
-        }
-        else if (Joy.getButtonUp(1)){
-            arm.setBeak(false);
-            claws = true;
-        }
-        arm.setPokers(Joy.getButton(2));
+
         
     }
 }
