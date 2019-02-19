@@ -60,6 +60,10 @@ public class DriveBase {
         return gyroXYZ;
     }
 
+    public double getGyroRate(){
+        return 0.0;
+    }
+
     public double getEncoderLPos() {
         return leaderL.getEncoder().getPosition();
     }

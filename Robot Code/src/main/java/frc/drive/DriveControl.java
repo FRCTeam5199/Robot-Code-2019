@@ -10,6 +10,8 @@ import edu.wpi.first.wpilibj.RobotDrive;
 public class DriveControl implements LoopModule{
 
     private final DriveBase base;
+
+    private final double rSpeed = 125;
     //private final PigeonIMU gyro;
     private final XBoxController controller;
 
@@ -29,7 +31,8 @@ public class DriveControl implements LoopModule{
     @Override
     public void update(long delta){
         base.gearChange(controller.getButton(6));
-        tankControl();
+        //tankControl();
+        arcadeControl();
         base.getGyro();
     }
 
@@ -51,7 +54,20 @@ public class DriveControl implements LoopModule{
 		left = notLTrigger * left + avg * lTrigger;
 
 		base.drive(right, left);
-	}
+    }
+
+    public void arcadeControl() {
+        double targetSpeed = controller.getStickRX() * rSpeed;
+		double turnSpeed = targetSpeed * .01;
+		base.drive(controller.getStickLY() + turnSpeed, controller.getStickLY() - turnSpeed);
+    }
+    
+    /* public void arcadeControlAssisted() {
+		double targetSpeed = controller.getStickRX() * rSpeed;
+		double currentSpeed = base.getGyroRate();
+		double turnSpeed = (targetSpeed - currentSpeed) * .01;
+		base.drive(controller.getStickLY() - turnSpeed, controller.getStickLY() + turnSpeed);
+	} */
 
     public DriveBase getBase() {
         return base;
