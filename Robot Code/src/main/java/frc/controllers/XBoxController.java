@@ -11,31 +11,47 @@ public class XBoxController {
 	}
 
 	public double getStickLX() {
-		return stick.getRawAxis(0);
+		if (Math.abs(stick.getRawAxis(0)) > .1){
+			return -stick.getRawAxis(0);
+		}
+		else{
+			return 0;
+		}
 	}
 
 	public double getStickLY() {
-		return -stick.getRawAxis(1);
+		if (Math.abs(stick.getRawAxis(1)) > .1){
+			return -stick.getRawAxis(1);
+		}
+		else{
+			return 0;
+		}
 	}
 
 	public double getStickRX() {
-		return stick.getRawAxis(4);
-		// return stick.getRawAxis(3);
+		if (Math.abs(stick.getRawAxis(4)) > .1){
+			return -stick.getRawAxis(4);
+		}
+		else{
+			return 0;
+		}
 	}
 
 	public double getStickRY() {
-		return -stick.getRawAxis(5);
-		// return -stick.getRawAxis(4);
+		if (Math.abs(stick.getRawAxis(5)) > .1){
+			return -stick.getRawAxis(5);
+		}
+		else{
+			return 0;
+		}
 	}
 
 	public double getLTrigger() {
 		return stick.getRawAxis(2);
-		// return stick.getRawAxis(3);
 	}
 
 	public double getRTrigger() {
 		return stick.getRawAxis(3);
-		// return stick.getRawAxis(5);
 	}
 
 	public boolean getButton(int n) {
