@@ -19,13 +19,14 @@ public class ArmControl implements LoopModule {
     private boolean wristUp = false;
     // this is in inches
     private double armLength = 20.75;
+    private double elePos = 0;
     //you still need to find elevator max height once the elevator and motor are put togehter, make a method to do it from the SD
     private double eleMaxHeight = 0;
     // --- IMPORTANT!!!
     private double eleMinHeight = 0;
     private double elbowMinAngle = 0;
     //measure this to be @ somewhere
-    private double elbowMaxAngle = 100;
+    private double elbowMaxAngle = 130;
     // ---
     private double wristAngle = 0;
     private double hatMod = 0;
@@ -51,11 +52,14 @@ public class ArmControl implements LoopModule {
 
     @Override
     public void init() {
-        arm.enableArmPID();
+        // arm.enableArmPID();
+
+        arm.disableArmPID();
 
         // elbowAngle = 0;
         // wristAngle = 0;
         hatMod = 0;
+        elbowAngle = arm.getElbowPosition();
         elbowTarget = elbowAngle;
 
         lastTime = System.currentTimeMillis();
@@ -69,6 +73,8 @@ public class ArmControl implements LoopModule {
     private void findArmPositions(){
         SmartDashboard.putNumber("Elbow Angle", elbowAngle);
         SmartDashboard.putNumber("Wrist Angle", wristAngle);
+        SmartDashboard.putNumber("Elevator Height", elePos);
+        elePos = arm.getElePosition();
     }
 
     // private void posInterpolator(double h, double a) {
@@ -80,10 +86,10 @@ public class ArmControl implements LoopModule {
     private double angleIncrementer(double j){
         if(System.currentTimeMillis() > lastTime + 10){
             if(j>0.1 && elbowTarget < elbowMaxAngle){
-                elbowTarget += 0.5;
+                elbowTarget += 1;
             }
             else if (j<-0.1 && elbowTarget > elbowMinAngle){
-                elbowTarget -= 0.5;
+                elbowTarget -= 1;
             }
             lastTime = System.currentTimeMillis();
             elbowAngle = arm.getElbowPosition();
@@ -109,30 +115,28 @@ public class ArmControl implements LoopModule {
         if (Joy.getHat() == -1){
             hatMod += 0;
         } 
-        else if (Joy.getHat() == 0){
+        else if (Joy.getHat() == 180){
             hatMod++;
         }
-        else if (Joy.getHat() == 180){
+        else if (Joy.getHat() == 0){
             hatMod--;
         }
     }
 
     //the new "armGoTo"
     private void armGoTo(){
+        armInterpolator.init(arm.getElbowPosition(), arm.getElbowPosition());
         if (panel.getButton(4) && armInterpolator.isFinished()){
             armInterpolator.init(arm.getElbowPosition(), 0);
-            this.moveArm(armInterpolator.get());
         }
         else if (panel.getButton(3) && armInterpolator.isFinished()){
             armInterpolator.init(arm.getElbowPosition(), 24);
-            this.moveArm(armInterpolator.get());
             hatMod = 0;
         }
         else if (panel.getButton(9) && armInterpolator.isFinished()){
             armInterpolator.init(arm.getElbowPosition(), 24);
-            this.moveArm(armInterpolator.get());
             //idk what angle so 50 is a guess
-            hatMod = 50;
+            hatMod = 90;
         }
 
 
@@ -200,17 +204,13 @@ public class ArmControl implements LoopModule {
     public void update(long delta) {
 
         this.findArmPositions();
-        this.armGoTo();
+        //this.armGoTo();
+        //this.moveArm(armInterpolator.get());
 
         if(Math.abs(Joy.getYAxis()) > 0 || Joy.getHat() != -1){
             this.moveArm(angleIncrementer(Joy.getYAxis()));
             this.wristIncrease();
         }
-
-        ////temp
-        // if(Math.abs(Joy.getYAxis()) > 0){
-        //     arm.moveElbow(Joy.getYAxis());
-        // }
         
     }
 }

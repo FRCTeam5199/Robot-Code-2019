@@ -3,7 +3,6 @@ package frc.arm;
 import frc.util.SparkMaxPID;
 import frc.robot.RobotMap;
 import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
@@ -24,8 +23,6 @@ public class Arm {
     private PIDController wristPID;
     private PIDController elePID;
 
-    private final Solenoid beak, pokers;
-
     //weight: 
     // Empirical Stall Torque: 2.6 Nm
     // Empirical Motor Kv: 473 Kv
@@ -43,10 +40,10 @@ public class Arm {
         wristRatio = 120/49;
         //                    |
         // this shit is wrong v
-        eleRatio = 0.378371;
-
-        beak = new Solenoid(RobotMap.gripperPiston);
-        pokers = new Solenoid(RobotMap.pokePistons);
+        //eleRatio = 0.378371;
+        eleRatio = ((1/14.54) * 1.751) * Math.PI;
+        //sprocket diam = 1.751
+        //1:7 -> 26:54
 
         intakeMotor = new VictorSPX(RobotMap.intakeMotor);
 
@@ -108,23 +105,7 @@ public class Arm {
         wristPID.disable();
     }
 
-    public void setBeak(boolean b){
-        beak.set(b);
-    }
-
-    public void beakOn(){
-        beak.set(true);
-    }
-
-    public void beakOff(){
-        beak.set(false);
-    }
-
-    public void setPokers(boolean b){
-        pokers.set(b);
-    }
-
-    public void runIntake(double s){
+    public void setIntake(double s){
         intakeMotor.set(ControlMode.PercentOutput, s);
     }
 
