@@ -26,7 +26,7 @@ public class LiftControl implements LoopModule{
     //     this.panel = panel;
     // }
 
-    //temp 
+    //temp , no panel rn
     public LiftControl(Lift lift, JoystickController Joy){
         this.lift = lift;
         this.Joy = Joy;
