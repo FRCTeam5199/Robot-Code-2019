@@ -14,12 +14,18 @@ public class RobotMap {
 	public static final int wristMotor = 5;
 	public static final int eleMotor = 3;
 	public static final int elbowMotor = 4;
-	public static final int driveLeaderRight = 1;
-	public static final int driveLeaderLeft = 2;
-	public static final int	driveSlaveRightA = 7;
-	public static final int	driveSlaveLeftA = 6;
-	public static final int driveSlaveRightB = 9;
-	public static final int	driveSlaveLeftB = 8;
+	// public static final int driveLeaderRight = 1;
+	// public static final int driveLeaderLeft = 2;
+	// public static final int	driveSlaveRightA = 7;
+	// public static final int	driveSlaveLeftA = 6;
+	// public static final int driveSlaveRightB = 9;
+	// public static final int	driveSlaveLeftB = 8;
+	public static final int driveLeaderRight = 2;
+	public static final int driveLeaderLeft = 1;
+	public static final int	driveSlaveRightA = 6;
+	public static final int	driveSlaveLeftA = 7;
+	public static final int driveSlaveRightB = 8;
+	public static final int	driveSlaveLeftB = 9;
 
 	public static final int CANGyro = 10;
 

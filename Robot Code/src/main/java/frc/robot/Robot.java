@@ -12,6 +12,8 @@ import frc.controllers.XBoxController;
 import frc.vision.Camera;
 import frc.drive.DriveBase;
 import frc.drive.DriveControl;
+import frc.grabber.Grabber;
+import frc.grabber.GrabberControl;
 import frc.lift.Lift;
 import frc.lift.LiftControl;
 import frc.controllers.ButtonPanel;
@@ -33,9 +35,11 @@ public class Robot extends TimedRobot {
     public static RemoteOutput nBroadcaster;
     public static Camera camera;
     private Arm arm;
+    private Grabber grabber;
     private Lift lift;
     private DriveBase base;
     private ArmControl armControl;
+    private GrabberControl grabberControl;
     private LiftControl liftControl;
     private DriveControl driveControl;
     private JoystickController Joy;
@@ -51,10 +55,12 @@ public class Robot extends TimedRobot {
         Joy = new JoystickController(1);
         panel = new ButtonPanel(2);
         arm = new Arm();
+        grabber = new Grabber();
         lift = new Lift();
         base = new DriveBase();
 
         armControl = new ArmControl(arm, Joy, panel);
+        grabberControl = new GrabberControl(grabber, Joy);
         liftControl = new LiftControl(lift, Joy);
         driveControl = new DriveControl(base, Xbox);
     }
@@ -66,6 +72,7 @@ public class Robot extends TimedRobot {
         BigLoop bigLoop = new BigLoop(cl);
 
         bigLoop.add(armControl);
+        bigLoop.add(grabberControl);
         bigLoop.add(liftControl);
         bigLoop.add(driveControl);
 
