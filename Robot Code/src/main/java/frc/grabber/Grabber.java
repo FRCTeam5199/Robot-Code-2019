@@ -16,6 +16,7 @@ public class Grabber {
     public Grabber() {
         gripperPiston = new Solenoid(RobotMap.gripperPiston);
         pokePistons = new Solenoid(RobotMap.pokePistons);
+        intake = new VictorSPX(RobotMap.intakeMotor);
 
         intake.setNeutralMode(NeutralMode.Coast);
     }
