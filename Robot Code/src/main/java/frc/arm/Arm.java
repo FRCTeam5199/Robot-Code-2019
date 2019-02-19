@@ -41,9 +41,12 @@ public class Arm {
         //                    |
         // this shit is wrong v
         //eleRatio = 0.378371;
-        eleRatio = ((1/14.54) * 1.751) * Math.PI;
-        //sprocket diam = 1.751
+        //units still arent exactly in inches, what is wrong with ratio?:
+        //
+        eleRatio = ((1/14.5384615) * 1.751) * Math.PI;
         //1:7 -> 26:54
+        //sprocket diam = 1.751
+        //eleTop : -31.053, loss @ bottom: 0.622-0.854
 
         intakeMotor = new VictorSPX(RobotMap.intakeMotor);
 
