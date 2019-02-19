@@ -11,6 +11,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 public class Camera implements Runnable {
 	private Thread thread;
 	private UsbCamera camera;
+	private UsbCamera camera2;
 
 	private boolean isAlive;
 
@@ -21,6 +22,8 @@ public class Camera implements Runnable {
 	public Camera(int xRes, int yRes) {
 		camera = CameraServer.getInstance().startAutomaticCapture(0);
 		camera.setResolution(xRes, yRes);
+		camera2 = CameraServer.getInstance().startAutomaticCapture(1);
+		camera2.setResolution(xRes, yRes);
 
 		start();
 	}
