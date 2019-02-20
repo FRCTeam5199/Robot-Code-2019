@@ -19,24 +19,35 @@ public class ArmControl implements LoopModule {
     private boolean wristUp = false;
     // this is in inches
     private double armLength = 20.75;
+
     private double elePos = 0;
-    //you still need to find elevator max height once the elevator and motor are put togehter, make a method to do it from the SD
-    private double eleMaxHeight = 0;
-    // --- IMPORTANT!!!
+    //eleTop : -31.053, loss @ bottom: 0.622-0.854
+    //The max height of the elevator is in arbitrary units rn, something is wrong with the eleRatio math or the gearing
+    private double eleMaxHeight = -31;
+    private double eleUpHeight = -29;
+    //ele motor is negative cause its reversed
     private double eleMinHeight = 0;
     private double elbowMinAngle = 0;
-    //measure this to be @ somewhere
+    //this number is a guess
     private double elbowMaxAngle = 130;
-    // ---
+    //
     private double wristAngle = 0;
+    private double wristMinAngle = 0;
+    //measure this to be @ somewhere & then implement a softstop
+    private double wristMaxAngle = 0;
+    //
+    //@ some point you need to start the arm straight out & then move it to the stowed position to see how the arm has to move to exit stow;
     private double hatMod = 0;
     private double elbowAngle = 0;
     private double elbowTarget = 0;
     private long lastTime;
-    private boolean wristPos, claws;
+    private boolean wristPos, STOP;
     private Vector2 armOffset = new Vector2(12.125, 20.5);
     private Interpolator eleInterpolator, elbowInterpolator, wristInterpolator, armInterpolator;
     private Vector2 stow, low, mid, high, cargoship, cargo1, cargo2, cargo3, max;
+
+    private String foo = "";
+    private double eleMotorPos;
 
     public ArmControl(Arm arm, JoystickController Joy, ButtonPanel panel) {
         this.arm = arm;
@@ -52,9 +63,9 @@ public class ArmControl implements LoopModule {
 
     @Override
     public void init() {
-        // arm.enableArmPID();
-
-        arm.disableArmPID();
+        arm.enableArmPID();
+        //arm.disableArmPID();
+        // !!!
 
         // elbowAngle = 0;
         // wristAngle = 0;
@@ -63,6 +74,8 @@ public class ArmControl implements LoopModule {
         elbowTarget = elbowAngle;
 
         lastTime = System.currentTimeMillis();
+
+        STOP = false;
 
         // armGoTo(rest);
         // wristInterpolator.init(arm.getWristPosition(), 0);
@@ -74,7 +87,10 @@ public class ArmControl implements LoopModule {
         SmartDashboard.putNumber("Elbow Angle", elbowAngle);
         SmartDashboard.putNumber("Wrist Angle", wristAngle);
         SmartDashboard.putNumber("Elevator Height", elePos);
+        SmartDashboard.putNumber("Elevator Motor Rotations", eleMotorPos);
+        SmartDashboard.putString("Button 12 Is", foo);
         elePos = arm.getElePosition();
+        eleMotorPos = arm.getEleMotorPos();
     }
 
     // private void posInterpolator(double h, double a) {
@@ -104,11 +120,38 @@ public class ArmControl implements LoopModule {
     }
 
     private void moveArm(double d){
-
         if(elbowTarget < elbowMaxAngle && elbowTarget > elbowMinAngle){
             arm.setElbow(d);
             arm.setWrist(-d + hatMod);
         }
+    }
+
+    private void eleUp(){
+        if(!STOP){
+            if (!eleInterpolator.isFinished()){
+                arm.setEle(eleInterpolator.get());
+            }
+            else if (eleInterpolator.isFinished()){
+                arm.setEle(arm.getElePosition());
+            }
+            else{
+                System.out.println("The Fuck?");
+            }
+        }
+    }
+
+    private void eleStop(){
+        STOP = true;
+        arm.setEle(arm.getElePosition());
+    }
+
+    private void eleStay(){
+        arm.setEle(arm.getElePosition());
+    }
+
+    private void armStay(){
+        arm.setElbow(arm.getElbowPosition());
+        arm.setWrist(arm.getWristPosition());
     }
 
     private void wristIncrease(){
@@ -207,10 +250,36 @@ public class ArmControl implements LoopModule {
         //this.armGoTo();
         //this.moveArm(armInterpolator.get());
 
-        if(Math.abs(Joy.getYAxis()) > 0 || Joy.getHat() != -1){
-            this.moveArm(angleIncrementer(Joy.getYAxis()));
-            this.wristIncrease();
+        // if(Math.abs(Joy.getYAxis()) > 0 || Joy.getHat() != -1){
+        //     this.moveArm(angleIncrementer(Joy.getYAxis()));
+        //     this.wristIncrease();
+        // }
+
+        if (Math.abs(Joy.getYAxis()) > 0){
+            arm.disableElePid();
+            arm.moveEle(Joy.getYAxis());
         }
+        else if (Math.abs(Joy.getYAxis()) == 0){
+            arm.enableElePid();
+        }
+
+        this.eleStay();
+        this.armStay();
+
+        // else if(Joy.getButtonDown(12)){
+        //     foo = "down";
+        //     STOP = false;
+        //     eleInterpolator.init(arm.getElePosition(), -eleUpHeight);
+        //     this.eleUp();
+        // }
+        // else if(Joy.getButtonDown(11)){
+        //     this.eleStop();
+        // }
+
+        //temp elevator test
+        // if(Math.abs(Joy.getYAxis()) > 0){
+        //     arm.moveEle(Joy.getYAxis());
+        // }
         
     }
 }

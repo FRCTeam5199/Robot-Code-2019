@@ -46,7 +46,6 @@ public class Arm {
         eleRatio = ((1/14.5384615) * 1.751) * Math.PI;
         //1:7 -> 26:54
         //sprocket diam = 1.751
-        //eleTop : -31.053, loss @ bottom: 0.622-0.854
 
         intakeMotor = new VictorSPX(RobotMap.intakeMotor);
 
@@ -54,9 +53,10 @@ public class Arm {
         wristMotor = new SparkMaxPID(RobotMap.wristMotor, MotorType.kBrushless);
         eleMotor = new SparkMaxPID(RobotMap.eleMotor, MotorType.kBrushless);
 
-        elbowPID = new PIDController(.1,0,0,0, elbowMotor, elbowMotor);
-        wristPID = new PIDController(.1,0,0, wristMotor, wristMotor);
-        elePID = new PIDController(.1,0,0,0, eleMotor, eleMotor);
+        //all of these need tuning oh boy
+        elbowPID = new PIDController(0.1,0,0,0, elbowMotor, elbowMotor);
+        wristPID = new PIDController(0.1,0,0, wristMotor, wristMotor);
+        elePID = new PIDController(0.27,0,0.1,0, eleMotor, eleMotor);
        
     }
 
@@ -108,6 +108,16 @@ public class Arm {
         wristPID.disable();
     }
 
+    //temp
+    public void disableElePid(){
+        elbowPID.disable();
+    }
+
+    public void enableElePid(){
+        elbowPID.enable();
+    }
+    //
+
     public void setIntake(double s){
         intakeMotor.set(ControlMode.PercentOutput, s);
     }
@@ -146,6 +156,10 @@ public class Arm {
 
     public double getElePosition(){
         return eleMotor.getEncoder().getPosition()*eleRatio;
+    }
+
+    public double getEleMotorPos(){
+        return eleMotor.getEncoder().getPosition();
     }
 
     public void setHatchIntake(double n) {
