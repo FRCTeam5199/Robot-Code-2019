@@ -9,7 +9,6 @@ public class Interpolator{
 
     public Interpolator(double a){
         k = a/2;
-
     }
 
     public void init(double start, double end){
