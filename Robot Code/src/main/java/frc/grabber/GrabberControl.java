@@ -25,13 +25,13 @@ public class GrabberControl implements LoopModule {
     @Override
     public void update(long delta) {
         if(Joy.getButtonDown(5) || Joy.getButtonDown(6)){
-            grabber.setIntake(.7);
+            grabber.setIntake(1);
         }
         else if(Joy.getButtonUp(5) || Joy.getButtonUp(6)){
             grabber.setIntake(0);
         }
         if (Joy.getButtonDown(3) || Joy.getButtonDown(4)) {
-            grabber.setIntake(-.7);
+            grabber.setIntake(-1);
         }
         else if (Joy.getButtonUp(3) || Joy.getButtonUp(4)){
             grabber.setIntake(0);
