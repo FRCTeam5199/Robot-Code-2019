@@ -55,8 +55,9 @@ public class Arm {
 
         //all of these need tuning oh boy
         elbowPID = new PIDController(0.1,0,0,0, elbowMotor, elbowMotor);
+        // ff: 1.55697115
         wristPID = new PIDController(0.1,0,0, wristMotor, wristMotor);
-        elePID = new PIDController(0.27,0,0.1,0, eleMotor, eleMotor);
+        elePID = new PIDController(0.27,0,0.1   ,0, eleMotor, eleMotor);
        
     }
 
@@ -97,24 +98,24 @@ public class Arm {
     }
 
     public void enableArmPID(){
-        elePID.enable();
+        //elePID.enable();
         elbowPID.enable();
         wristPID.enable();
     }
 
     public void disableArmPID(){
-        elePID.disable();
+        //elePID.disable();
         elbowPID.disable();
         wristPID.disable();
     }
 
     //temp
     public void disableElePid(){
-        elbowPID.disable();
+        elePID.disable();
     }
 
     public void enableElePid(){
-        elbowPID.enable();
+        elePID.enable();
     }
     //
 
@@ -140,6 +141,14 @@ public class Arm {
 
     public void setEle(double r){
         elePID.pidWrite(r/eleRatio);
+    }
+
+    public void setPointElbow(double r){
+        elbowPID.setSetpoint(r/elbowRatio);
+    }
+
+    public void setPointWrist(double r){
+        wristPID.setSetpoint(r/wristRatio);
     }
 
     public void moveEle(double s){
