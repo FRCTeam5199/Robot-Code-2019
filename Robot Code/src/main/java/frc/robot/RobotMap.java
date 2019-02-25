@@ -36,8 +36,9 @@ public class RobotMap {
 
 	//Digital I/Os
 	public static final int liftLimitSwitch = 9;
-	public static final int wristLimitSwitch = 8;
-	public static final int elbowLimitSwitch = 7;
+	//no limit switches on the arm
+	// public static final int wristLimitSwitch = 8;
+	// public static final int elbowLimitSwitch = 7;
 
 
 	//Control panel buttons
