@@ -24,18 +24,19 @@ public class GrabberControl implements LoopModule {
 
     @Override
     public void update(long delta) {
-        if(Joy.getButtonDown(5) || Joy.getButtonDown(6)){
-            grabber.setIntake(1);
+        
+        if (Joy.getHat() != -1){
+            if (Joy.getHat() == 180){
+                grabber.setIntake(1);
+            }
+            else if (Joy.getHat() == 0){
+                grabber.setIntake(-1);
+            }
         }
-        else if(Joy.getButtonUp(5) || Joy.getButtonUp(6)){
+        else if (Joy.getHat() == -1){
             grabber.setIntake(0);
         }
-        if (Joy.getButtonDown(3) || Joy.getButtonDown(4)) {
-            grabber.setIntake(-1);
-        }
-        else if (Joy.getButtonUp(3) || Joy.getButtonUp(4)){
-            grabber.setIntake(0);
-        }
+
         if (Joy.getButtonDown(1)){
 
             if (!grabberOut && !pokersOut) {
@@ -55,13 +56,22 @@ public class GrabberControl implements LoopModule {
                 grabberOut = false;
             }
 
-            
         }
-        //else if (Joy.getButtonUp(1)){
-        //  grabber.setGrabber(false);
-        //  grabberOut = true;
-        //  grabber.setPokers(true);
-        //}
-        //grabber.setPokers(Joy.getButton(2));
-}
+
+        //----------------------------------------
+
+        /* if(Joy.getButtonDown(5) || Joy.getButtonDown(6)){
+            grabber.setIntake(1);
+        }
+        else if(Joy.getButtonUp(5) || Joy.getButtonUp(6)){
+            grabber.setIntake(0);
+        }
+        if (Joy.getButtonDown(3) || Joy.getButtonDown(4)) {
+            grabber.setIntake(-1);
+        }
+        else if (Joy.getButtonUp(3) || Joy.getButtonUp(4)){
+            grabber.setIntake(0);
+        } */
+            
+    }
 }

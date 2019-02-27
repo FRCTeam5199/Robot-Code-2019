@@ -7,6 +7,7 @@ public class RobotMap {
 	public static final int gearboxPistonB = 0;
 	public static final int gearboxPistonA = 1;
 	public static final int pokePistons = 3;
+	public static final int vPiston = 4;
 	public static final int gripperPiston = 2;
 
 

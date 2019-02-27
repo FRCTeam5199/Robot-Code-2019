@@ -32,7 +32,7 @@ public class Arm {
 
     //in units of degrees, degrees, inches
     private double elbowRatio, wristRatio, eleRatio;
-    private double kP, kI, kD, kFF;
+    private double ekP, ekI, ekD, ekFF, elkP, elkI, elkD, elkFF, wkP, wkI, wkD, wkFF;
 
     public Arm(){
         // these ratios are a little off
@@ -54,32 +54,62 @@ public class Arm {
         eleMotor = new SparkMaxPID(RobotMap.eleMotor, MotorType.kBrushless);
 
         //all of these need tuning oh boy
-        elbowPID = new PIDController(0.1,0,0,0, elbowMotor, elbowMotor);
-        // ff: 1.55697115
+        elbowPID = new PIDController(0.1,0.0000005,0.15,.01355871, elbowMotor, elbowMotor);
+        // ff: 1% of 1.55697115 (w/ change: .01255871)
         wristPID = new PIDController(0.1,0,0, wristMotor, wristMotor);
-        elePID = new PIDController(0.27,0,0.1   ,0, eleMotor, eleMotor);
+        elePID = new PIDController(0.1,0.000001,0.1,.00125, eleMotor, eleMotor);
        
     }
 
     public void initAdjustPID(){
-		SmartDashboard.putNumber("Elbow P", kP);
-		SmartDashboard.putNumber("Elbow I", kI);
-        SmartDashboard.putNumber("Elbow D", kD);
-        // SmartDashboard.putNumber("Elbow FF", kFF);
+		SmartDashboard.putNumber("Elbow P", ekP);
+		SmartDashboard.putNumber("Elbow I", ekI);
+        SmartDashboard.putNumber("Elbow D", ekD);
+        SmartDashboard.putNumber("Elbow FF", ekFF);
+
+        SmartDashboard.putNumber("Elevator P", elkP);
+		SmartDashboard.putNumber("Elevator I", elkI);
+        SmartDashboard.putNumber("Elevator D", elkD);
+        SmartDashboard.putNumber("Elevator FF", elkFF);
+
+        SmartDashboard.putNumber("Wrist P", wkP);
+		SmartDashboard.putNumber("Wrist I", wkI);
+        SmartDashboard.putNumber("Wrist D", wkD);
+        SmartDashboard.putNumber("Wrist FF", wkFF);
         // add the rest
         
     }
     
     public void adjustPID() {
-		double p = SmartDashboard.getNumber("Elbow P", 0);
-		double i = SmartDashboard.getNumber("Elbow I", 0);
-        double d = SmartDashboard.getNumber("Elbow D", 0);
-        double ff = SmartDashboard.getNumber("Elbow FF", 0);
+		double ep = SmartDashboard.getNumber("Elbow P", 0);
+		double ei = SmartDashboard.getNumber("Elbow I", 0);
+        double ed = SmartDashboard.getNumber("Elbow D", 0);
+        double eff = SmartDashboard.getNumber("Elbow FF", 0);
 
-        if((p != kP)) { elbowPID.setP(p); kP = p; }
-        if((i != kI)) { elbowPID.setI(i); kI = i; }
-        if((d != kD)) { elbowPID.setD(d); kD = d; }
-        if((ff != kFF)) { elbowPID.setF(ff); kFF = ff;}
+        if((ep != ekP)) { elbowPID.setP(ep); ekP = ep; }
+        if((ei != ekI)) { elbowPID.setI(ei); ekI = ei; }
+        if((ed != ekD)) { elbowPID.setD(ed); ekD = ed; }
+        if((eff != ekFF)) { elbowPID.setF(eff); ekFF = eff;}
+
+        double elp = SmartDashboard.getNumber("Elevator P", 0);
+		double eli = SmartDashboard.getNumber("Elevator I", 0);
+        double eld = SmartDashboard.getNumber("Elevator D", 0);
+        double elff = SmartDashboard.getNumber("Elevator FF", 0);
+
+        if((elp != elkP)) { elePID.setP(elp); elkP = elp; }
+        if((eli != elkI)) { elePID.setI(eli); elkI = eli; }
+        if((eld != elkD)) { elePID.setD(eld); elkD = eld; }
+        if((elff != elkFF)) { elePID.setF(elff); elkFF = elff;}
+
+        double wp = SmartDashboard.getNumber("Wrist P", 0);
+		double wi = SmartDashboard.getNumber("Wrist I", 0);
+        double wd = SmartDashboard.getNumber("Wrist D", 0);
+        double wff = SmartDashboard.getNumber("Wrist FF", 0);
+
+        if((wp != wkP)) { wristPID.setP(wp); wkP = wp; }
+        if((wi != wkI)) { wristPID.setI(wi); wkI = wi; }
+        if((wd != wkD)) { wristPID.setD(wd); wkD = wd; }
+        if((wff != wkFF)) { wristPID.setF(wff); wkFF = wff;}
 
         //add the rest
 
@@ -98,26 +128,24 @@ public class Arm {
     }
 
     public void enableArmPID(){
-        //elePID.enable();
+        elePID.enable();
         elbowPID.enable();
         wristPID.enable();
     }
 
     public void disableArmPID(){
-        //elePID.disable();
+        elePID.disable();
         elbowPID.disable();
         wristPID.disable();
     }
 
-    //temp
-    public void disableElePid(){
-        elePID.disable();
-    }
-
-    public void enableElePid(){
+    public void enableElePID(){
         elePID.enable();
     }
-    //
+
+    public void disableElePID(){
+        elePID.disable();
+    }
 
     public void setIntake(double s){
         intakeMotor.set(ControlMode.PercentOutput, s);
@@ -149,6 +177,10 @@ public class Arm {
 
     public void setPointWrist(double r){
         wristPID.setSetpoint(r/wristRatio);
+    }
+
+    public void setPointEle(double r){
+        elePID.setSetpoint(r/eleRatio);
     }
 
     public void moveEle(double s){

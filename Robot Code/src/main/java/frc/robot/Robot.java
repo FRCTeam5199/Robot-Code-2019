@@ -50,7 +50,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         nBroadcaster = new RemoteOutput("10.51.99.27", 5800);
         Robot.nBroadcaster.println("Starting up...");
-        // camera = new Camera();
+        camera = new Camera();
         Xbox = new XBoxController(0);
         Joy = new JoystickController(1);
         panel = new ButtonPanel(2);
@@ -61,8 +61,9 @@ public class Robot extends TimedRobot {
 
         armControl = new ArmControl(arm, Joy, panel);
         grabberControl = new GrabberControl(grabber, Joy);
-        liftControl = new LiftControl(lift, Joy);
+        liftControl = new LiftControl(lift, panel);
         driveControl = new DriveControl(base, Xbox);
+
     }
 
     @Override

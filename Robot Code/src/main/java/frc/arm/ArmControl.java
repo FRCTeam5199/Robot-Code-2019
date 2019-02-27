@@ -7,7 +7,6 @@ import frc.interfaces.LoopModule;
 import frc.motion.Interpolator;
 
 import frc.util.Vector2;
-import java.util.Vector;
 
 import com.revrobotics.ControlType;
 
@@ -21,12 +20,16 @@ public class ArmControl implements LoopModule {
     private double armLength = 20.75;
 
     private double elePos = 0;
+    private double eleMotorPos;
     //eleTop : -31.053, loss @ bottom: 0.622-0.854
     //The max height of the elevator is in arbitrary units rn, something is wrong with the eleRatio math or the gearing
     private double eleMaxHeight = -31;
     private double eleUpHeight = -29;
     //ele motor is negative cause its reversed
     private double eleMinHeight = 0;
+    //
+    private double elbowAngle = 0;
+    private double elbowTarget = 0;
     private double elbowMinAngle = 0;
     //this number is a guess
     private double elbowMaxAngle = 130;
@@ -39,13 +42,16 @@ public class ArmControl implements LoopModule {
     //
     //@ some point you need to start the arm straight out & then move it to the stowed position to see how the arm has to move to exit stow;
     private double hatMod = 0;
-    private double elbowAngle = 0;
-    private double elbowTarget = 0;
-    private double eleMotorPos;
 
+    private double soW = -92.6658478;
+    private double soE = 27.047672;
+    private boolean a;
+    // ***
+    private boolean stowed = false;
+    // ***
     private long lastTime;
     private Vector2 armOffset = new Vector2(12.125, 20.5);
-    private Interpolator eleInterpolator, elbowInterpolator, wristInterpolator, armInterpolator;
+    private Interpolator eleInterpolator, elbowInterpolator, wristInterpolator, armInterpolator, elbowDownInterpolator;
     private Vector2 stow, ground, hatch1, hatch2, hatch3, cargoship, cargo1, cargo2, cargo3, max;
 
     public ArmControl(Arm arm, JoystickController Joy, ButtonPanel panel) {
@@ -55,6 +61,7 @@ public class ArmControl implements LoopModule {
 
         eleInterpolator = new Interpolator(3);
         elbowInterpolator = new Interpolator(10);
+        elbowDownInterpolator = new Interpolator(5);
         wristInterpolator = new Interpolator(10);
         armInterpolator = new Interpolator(25);
 
@@ -63,24 +70,31 @@ public class ArmControl implements LoopModule {
     @Override
     public void init() {
         arm.enableArmPID();
-        arm.disableElePid();
         //arm.disableArmPID();
         // !!!
-
+        a = false;
         hatMod = 0;
         elbowAngle = arm.getElbowPosition();
         elbowTarget = elbowAngle;
         wristAngle = arm.getWristPosition();
         wristTarget = wristAngle;
-
+        elePos = arm.getElePosition();
         lastTime = System.currentTimeMillis();
+        if (stowed){
+            soW = -92.6658478;
+            soE = 27.047672;
+            this.exitStow();
+        }
+        if(!stowed){
+            soW = 0;
+            soE = 0;
+        }
 
         // armGoTo(rest);
         // wristInterpolator.init(arm.getWristPosition(), 0);
 
     }
 
-    //temp
     private void findArmPositions(){
         SmartDashboard.putNumber("Elbow Angle", elbowAngle);
         SmartDashboard.putNumber("Wrist Angle", wristAngle);
@@ -97,6 +111,10 @@ public class ArmControl implements LoopModule {
         elbowInterpolator.init(arm.getElbowPosition(), e);
         wristInterpolator.init(arm.getWristPosition(), w);
     }
+    private void eleInterpolator(double d){
+        eleInterpolator.init(arm.getElePosition(), d);
+    }
+    //combine these two later
 
     private double angleIncrementer(double j){
         if(System.currentTimeMillis() > lastTime + 10){
@@ -143,8 +161,12 @@ public class ArmControl implements LoopModule {
         }
     }
 
-    private void eleUp(){
-
+    private void eleMove(double d){
+        this.eleInterpolator(d);
+        while(!eleInterpolator.isFinished()){
+            double epos = eleInterpolator.get();
+            arm.setEle(epos);
+        }
     }
 
     private void armStay(){
@@ -166,26 +188,23 @@ public class ArmControl implements LoopModule {
 
     //the new "armGoTo"
     private void armMove(){
-        //armInterpolator.init(arm.getElbowPosition(), arm.getElbowPosition());
-        if (Joy.getButton(10)){
-            armInterpolator.init(arm.getElbowPosition(), 0);
-            elbowTarget = 0;
-        }
-        else if (Joy.getButton(12)){
-            armInterpolator.init(arm.getElbowPosition(), 24);
-            elbowTarget = 24;
-            hatMod = 0;
-        }
-        else if (Joy.getButton(11)){
-            armInterpolator.init(arm.getElbowPosition(), 24);
-            elbowTarget = 24;
-            //idk what angle so 90 is a guess
-            hatMod = 90;
-        }
-
 
     }
 
+    private void exitStow(){
+        eleMove(-5);
+        if(System.currentTimeMillis() > lastTime + 10){
+            moveArmTo(15.85718 + soE,0.5714277 + soW);
+            a = true;
+            lastTime = System.currentTimeMillis();
+        }
+        if (a && System.currentTimeMillis() > lastTime + 10){
+            moveArmTo(15.85718 + soE,0.5714277 + soW);
+            eleMove(-1.5);
+        }
+    }
+
+/* 
     private void wristFlip() {
         wristUp = !wristUp;
         if (wristUp) {
@@ -194,7 +213,7 @@ public class ArmControl implements LoopModule {
             wristInterpolator.init(arm.getWristPosition(), 0);
         }
         
-    }
+    } */
 
 /*     public void armGoTo(Vector2 vGlobal) {
         SmartDashboard.putString("Arm Status", "We Good");
@@ -249,31 +268,75 @@ public class ArmControl implements LoopModule {
 
         this.findArmPositions();
 
+        /* if(Math.abs(Joy.getYAxis()) > 0 || Joy.getHat() != -1){
+            this.moveArm(angleIncrementer(Joy.getYAxis()));
+            this.wristIncrease();
+        } */
+
+        /* //increaser from the hat and joy v
         if(Math.abs(Joy.getYAxis()) > 0 || Joy.getHat() != -1){
             this.moveArm(angleIncrementer(Joy.getYAxis()));
             this.wristIncrease();
-        }
+        } */
 
+        //^this moves the arm with the joy and hat, right now it does a weird thing where it locks the position of the wrist to the hatMod when you go to setpoints
+
+        // //temp
+        // if(Math.abs(Joy.getYAxis()) > 0){
+        //     arm.disableElePID();
+        //     arm.moveEle(Joy.getYAxis());
+        // }
+        // else if(Math.abs(Joy.getYAxis())  == 0){
+        //     arm.enableElePID();
+        //     arm.setEle(arm.getElePosition());
+        // }
+        
         if(panel.getButton(9)){
-            moveArmTo(47.3806, 44.1902);
+            eleMove(-1.5);
+            moveArmTo(47.3806 + soE, 44.1902 + soW);
         }
         //hatch1 ^
-        if(panel.getButton(4)){
-            //moveArmTo(21.28582, -7.0476122);
-            // the old one^
-            moveArmTo(15.85718,0.5714277);
+        if(panel.getButton(5)){
+            eleMove(-1.5);
+            moveArmTo(15.85718 + soE,0.5714277 + soW);
         }
-        //^ the ground
+        //^float/cargo intake pos, ~.5 in off the ground
+        if(panel.getButton(6)){
+            eleMove(-1.5);
+            moveArmTo(21.28582 + soE, -7.0476122 + soW);
+        }
+        //^ the hatch intake position ~1in off the ground ;; also needs to reverse intake rollers
         if(panel.getButton(3)){
-            moveArmTo(68.713668, -18.47626);
+            eleMove(-1.5);
+            moveArmTo(68.713668 + soE, -18.47626 + soW);
         }
         //cargo1^
         if(panel.getButton(2)){
-            moveArmTo(129.0, -55.428165);
+            eleMove(-1.5);
+            moveArmTo(128.0 + soE, -55.428165 + soW);
         }
         //cargo2^
-        
-        
+        if(panel.getButton(1)){
+            eleMove(-21);
+            moveArmTo(127.3835 + soE, -71.9 + soW);
+        }
+        //cargo3^
+        if(panel.getButton(8)){
+            eleMove(-21);
+            moveArmTo(29.76192 + soE, 61.42806 + soW);
+        }
+        //hatch2^
+        if(panel.getButton(7)){
+            moveArmTo(120.43 + soE, -17.8572 + soW);
+            eleMove(-21);
+        }
+        //hatch3^
+        // if(panel.getButton(thetravelpointbutton)){
+
+        // }
+        // //go to the travel point
+        // ----
+
         //this is temp
         /* if (Math.abs(Joy2.getYAxis()) > 0){
             arm.disableElePid();
