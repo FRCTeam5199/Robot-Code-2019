@@ -26,6 +26,7 @@ public class GrabberControl implements LoopModule {
 
     @Override
     public void init() {
+        grabber.setGrabber(false);
         hasHatch = false;
         lastTime = System.currentTimeMillis();
         lastButton = -1;
@@ -58,40 +59,25 @@ public class GrabberControl implements LoopModule {
         // Hatch: Trigger
         if (Joy.getButtonDown(1)){
 
-            // Ground pickup
-            if (groundPickupActive()) {
-
-                //grabber.setHatchGuide(false);
-
-                // Error correction when operator misses hatch
-                if (hasHatch) {
-                    grabber.setGrabber(false);
-                } else {
-                    grabber.setGrabber(true);
-                }
-
+            if(!hasHatch) {
+                grabber.setGrabber(true);
+                grabber.setPokers(false);
+                hasHatch = true;
+            } else {
+                grabber.setGrabber(false);
+                grabber.setPokers(true);
+                hasHatch = false;
+                lastTime = System.currentTimeMillis();
             }
-            // Non-ground pickup
-            else {
-                //grabber.setHatchGuide(true);
 
-                // Deploy hatch
-                if (hasHatch) {
-                    grabber.setPokers(true);
-                    grabber.setGrabber(false);
-                
-                    if (lastTime > System.currentTimeMillis() + 250) {
-                        grabber.setPokers(false);
-                        hasHatch = false;
-                    }
-                // Collect hatch
-                } else {
-                    grabber.setGrabber(true);
-                    hasHatch = true;
-                }
-                
-            }
             SmartDashboard.putBoolean("Hatch", hasHatch);
+        //     SmartDashboard.putNumber("lastTime", lastTime);
+        }
+
+        if (System.currentTimeMillis() > lastTime + 200 && !hasHatch) {
+            grabber.setPokers(false);
+            hasHatch = false;
+            lastTime = System.currentTimeMillis();
         }
             
     }
