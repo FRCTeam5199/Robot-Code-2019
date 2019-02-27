@@ -4,8 +4,11 @@ import edu.wpi.first.wpilibj.Joystick;
 public class ButtonPanel{
 	private final Joystick button;
 
+	public static int lastButton;
+
 	public ButtonPanel(int n) {
 		button = new Joystick(n);
+		lastButton = 0;
 	}
 	public boolean getButton(int n) {
 		return button.getRawButton(n);
