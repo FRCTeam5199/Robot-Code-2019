@@ -3,6 +3,8 @@ package frc.grabber;
 import edu.wpi.first.wpilibj.Solenoid;
 import frc.robot.RobotMap;
 
+import java.awt.Panel;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
