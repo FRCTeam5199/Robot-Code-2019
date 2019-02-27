@@ -71,7 +71,7 @@ public class DriveBase {
     public double getEncoderRPos() {
         return leaderR.getEncoder().getPosition();
     }
-
+    //no gear shifting on the practice bot
     public void gearChange(boolean b) {
         shiftUp.set(b);
         shiftDown.set(!b);
