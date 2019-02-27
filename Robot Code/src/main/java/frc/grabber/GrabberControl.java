@@ -2,29 +2,47 @@ package frc.grabber;
 
 import frc.grabber.Grabber;
 import frc.interfaces.LoopModule;
+
+import javax.swing.text.StyleContext.SmallAttributeSet;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.controllers.ButtonPanel;
 import frc.controllers.JoystickController;
 
 public class GrabberControl implements LoopModule {
     private final Grabber grabber;
     private final JoystickController Joy;
+    private final ButtonPanel panel;
 
-    private boolean grabberOut, pokersOut;
+    private boolean hasHatch;
+    private double lastTime;
+    private int lastButton;
 
-    public GrabberControl(Grabber grabber, JoystickController Joy) {
+    public GrabberControl(Grabber grabber, JoystickController Joy, ButtonPanel panel) {
         this.grabber = grabber;
         this.Joy = Joy;
-        grabberOut = false;
-        pokersOut = false;
+        this.panel = panel;
     }
 
     @Override
     public void init() {
-        grabberOut = false;
+        hasHatch = false;
+        lastTime = System.currentTimeMillis();
+        lastButton = -1;
+    }
+
+    private boolean groundPickupActive () {
+        
+        if (lastButton == 3 || lastButton == 6) {
+            return true;
+        }
+        return false;
     }
 
     @Override
     public void update(long delta) {
         
+        // Cargo: Joystick
         if (Joy.getHat() != -1){
             if (Joy.getHat() == 180){
                 grabber.setIntake(1);
@@ -37,41 +55,44 @@ public class GrabberControl implements LoopModule {
             grabber.setIntake(0);
         }
 
+        // Hatch: Trigger
         if (Joy.getButtonDown(1)){
 
-            if (!grabberOut && !pokersOut) {
-                grabber.setGrabber(true);
-                grabberOut = true;
-            } else if (grabberOut && !pokersOut) {
-                grabber.setPokers(true);
-                pokersOut = true;
+            // Ground pickup
+            if (groundPickupActive()) {
 
-                grabber.setGrabber(false);
-                grabberOut = false;
-            } else {
-                grabber.setPokers(false);
-                pokersOut = false;
-                
-                grabber.setGrabber(false);
-                grabberOut = false;
+                //grabber.setHatchGuide(false);
+
+                // Error correction when operator misses hatch
+                if (hasHatch) {
+                    grabber.setGrabber(false);
+                } else {
+                    grabber.setGrabber(true);
+                }
+
             }
+            // Non-ground pickup
+            else {
+                //grabber.setHatchGuide(true);
 
+                // Deploy hatch
+                if (hasHatch) {
+                    grabber.setPokers(true);
+                    grabber.setGrabber(false);
+                
+                    if (lastTime > System.currentTimeMillis() + 250) {
+                        grabber.setPokers(false);
+                        hasHatch = false;
+                    }
+                // Collect hatch
+                } else {
+                    grabber.setGrabber(true);
+                    hasHatch = true;
+                }
+                
+            }
+            SmartDashboard.putBoolean("Hatch", hasHatch);
         }
-
-        //----------------------------------------
-
-        /* if(Joy.getButtonDown(5) || Joy.getButtonDown(6)){
-            grabber.setIntake(1);
-        }
-        else if(Joy.getButtonUp(5) || Joy.getButtonUp(6)){
-            grabber.setIntake(0);
-        }
-        if (Joy.getButtonDown(3) || Joy.getButtonDown(4)) {
-            grabber.setIntake(-1);
-        }
-        else if (Joy.getButtonUp(3) || Joy.getButtonUp(4)){
-            grabber.setIntake(0);
-        } */
             
     }
 }

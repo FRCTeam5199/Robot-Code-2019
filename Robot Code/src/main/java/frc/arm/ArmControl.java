@@ -294,41 +294,49 @@ public class ArmControl implements LoopModule {
         if(panel.getButton(9)){
             eleMove(-1.5);
             moveArmTo(47.3806 + soE, 44.1902 + soW);
+            panel.lastButton = 9;
         }
         //hatch1 ^
         if(panel.getButton(5)){
             eleMove(-1.5);
             moveArmTo(15.85718 + soE,0.5714277 + soW);
+            panel.lastButton = 5;
         }
         //^float/cargo intake pos, ~.5 in off the ground
         if(panel.getButton(6)){
             eleMove(-1.5);
             moveArmTo(21.28582 + soE, -7.0476122 + soW);
+            panel.lastButton = 6;
         }
         //^ the hatch intake position ~1in off the ground ;; also needs to reverse intake rollers
         if(panel.getButton(3)){
             eleMove(-1.5);
             moveArmTo(68.713668 + soE, -18.47626 + soW);
+            panel.lastButton = 3;
         }
         //cargo1^
         if(panel.getButton(2)){
             eleMove(-1.5);
             moveArmTo(128.0 + soE, -55.428165 + soW);
+            panel.lastButton = 2;
         }
         //cargo2^
         if(panel.getButton(1)){
             eleMove(-21);
             moveArmTo(127.3835 + soE, -71.9 + soW);
+            panel.lastButton = 1;
         }
         //cargo3^
         if(panel.getButton(8)){
             eleMove(-21);
             moveArmTo(29.76192 + soE, 61.42806 + soW);
+            panel.lastButton = 8;
         }
         //hatch2^
         if(panel.getButton(7)){
             moveArmTo(120.43 + soE, -17.8572 + soW);
             eleMove(-21);
+            panel.lastButton = 7;
         }
         //hatch3^
         // if(panel.getButton(thetravelpointbutton)){
