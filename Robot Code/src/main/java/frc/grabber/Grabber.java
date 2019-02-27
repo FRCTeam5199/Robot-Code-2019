@@ -14,11 +14,13 @@ public class Grabber {
     private VictorSPX intake;
     private Solenoid gripperPiston;
     private Solenoid pokePistons;
+    private Solenoid hatchGuidePiston;
 
     public Grabber() {
         gripperPiston = new Solenoid(RobotMap.gripperPiston);
         pokePistons = new Solenoid(RobotMap.pokePistons);
         intake = new VictorSPX(RobotMap.intakeMotor);
+        //hatchGuide = new Solenoid(RobotMap.hatchGuidePiston);
 
         intake.setNeutralMode(NeutralMode.Coast);
     }
@@ -34,5 +36,8 @@ public class Grabber {
     public void setIntake(double n) {
         intake.set(ControlMode.PercentOutput, n);
     }
-    
+
+    // public void setHatchGuide(boolean b) {
+    //     hatchGuide.set(b);
+    // }    
 }
