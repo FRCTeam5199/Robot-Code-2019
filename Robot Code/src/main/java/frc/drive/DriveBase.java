@@ -45,8 +45,8 @@ public class DriveBase {
     }
 
     public void drive(double left, double right) {
-        leaderL.set(left);
-        leaderR.set(-right);
+        leaderL.set(-left);
+        leaderR.set(right);
         // left is reversed
    
     }

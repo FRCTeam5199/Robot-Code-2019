@@ -15,7 +15,7 @@ public class DriveControl implements LoopModule{
     //private final PigeonIMU gyro;
     private final XBoxController controller;
 
-    private final double speed = 1;
+    private final double speed = .25;
 
     public DriveControl(DriveBase base, XBoxController controller) {
         this.base = base;
