@@ -61,6 +61,8 @@ public class GrabberControl implements LoopModule {
             // Ground pickup
             if (groundPickupActive()) {
 
+                //grabber.setHatchGuide(false);
+
                 // Error correction when operator misses hatch
                 if (hasHatch) {
                     grabber.setGrabber(false);
@@ -71,6 +73,8 @@ public class GrabberControl implements LoopModule {
             }
             // Non-ground pickup
             else {
+                //grabber.setHatchGuide(true);
+
                 // Deploy hatch
                 if (hasHatch) {
                     grabber.setPokers(true);
