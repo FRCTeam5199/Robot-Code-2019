@@ -4,9 +4,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.controllers.ButtonPanel;
 import frc.controllers.JoystickController;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-
-import java.awt.Button;
-
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.ControlType;
 import frc.robot.RobotMap;
@@ -15,15 +12,24 @@ import frc.interfaces.LoopModule;
 
 public class LiftControl implements LoopModule{
     private final Lift lift;
-    private final ButtonPanel panel;
+    //private final ButtonPanel panel;
+    //temp
+    private JoystickController Joy;
+    //
     private boolean winchUpButton = false;
     private boolean winchDownButton = false;
     private boolean liftDriveFWD = false;
     private boolean liftDriveBWD = false;
 
-    public LiftControl(Lift lift, ButtonPanel panel){
+    // public LiftControl(Lift lift, ButtonPanel panel){
+    //     this.lift = lift;
+    //     this.panel = panel;
+    // }
+
+    //temp , no panel rn
+    public LiftControl(Lift lift, JoystickController Joy){
         this.lift = lift;
-        this.panel = panel;
+        this.Joy = Joy;
     }
 
     public void init(){
@@ -53,24 +59,24 @@ public class LiftControl implements LoopModule{
         //     lift.setLiftDriveBWD();
         // }
 
-        ////temp (needed to override limit switch stuff)
+        ////temp (needed to override limit switch stuff && no cntrl panel)
 
-        if(panel.getButtonDown(8)){
+        if(Joy.getButtonDown(8)){
             liftUp();
         }
-        else if(panel.getButtonUp(8)){
+        else if(Joy.getButtonUp(8)){
             lift.winchNoMove();
         }
-        if(panel.getButtonDown(7)){
+        if(Joy.getButtonDown(7)){
             liftDown();
         }
-        else if (panel.getButtonUp(7)){
+        else if (Joy.getButtonUp(7)){
             lift.winchNoMove();
         }
-        if(panel.getButtonDown(9)){
+        if(Joy.getButtonDown(9)){
             lift.setLiftDriveFWD();
         }
-        else if(panel.getButtonUp(9)){
+        else if(Joy.getButtonUp(9)){
             lift.setLiftDriveOff();
         }
     }
