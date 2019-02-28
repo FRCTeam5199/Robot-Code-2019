@@ -10,7 +10,7 @@ import frc.util.Vector2;
 
 import com.revrobotics.ControlType;
 
-public class ArmControl implements LoopModule { 
+public class ArmControl implements LoopModule {
 
     private final JoystickController Joy;
     private final ButtonPanel panel;
@@ -20,25 +20,27 @@ public class ArmControl implements LoopModule {
     //
     private double elePos = 0;
     private double eleMotorPos;
-    //eleTop : -31.053, loss @ bottom: 0.622-0.854
-    //The max height of the elevator is in arbitrary units rn, something is wrong with the eleRatio math or the gearing
+    // eleTop : -31.053, loss @ bottom: 0.622-0.854
+    // The max height of the elevator is in arbitrary units rn, something is wrong
+    // with the eleRatio math or the gearing
     private double eleMaxHeight = -31;
-    //ele motor is negative cause its reversed
+    // ele motor is negative cause its reversed
     private double elbowAngle = 0;
     private double elbowTarget = 0;
     private double elbowMinAngle = 0;
-    //this number is a guess
+    // this number is a guess
     private double elbowMaxAngle = 130;
     private double wristAngle = 0;
     private double wristTarget = 0;
     private double wristMinAngle = 0;
-    //measure this to be @ somewhere & then implement a softstop
+    // measure this to be @ somewhere & then implement a softstop
     private double wristMaxAngle = 0;
     //
     private double hatMod = 0;
     // so = stupid offset
     private double soW = -92.6658478;
     private double soE = 27.047672;
+    double epos, wpos, elpos;
     //
     private boolean done;
     private boolean stowed = false;
@@ -46,8 +48,9 @@ public class ArmControl implements LoopModule {
     // private double[] cargo1,cargo2,cargo3,intake,hatch1,hatch2,hatch3,travel;
 
     private long lastTime;
-    //private Vector2 armOffset = new Vector2(12.125, 20.5);
-    //private Vector2 stow, ground, hatch1, hatch2, hatch3, cargoship, cargo1, cargo2, cargo3, max;
+    // private Vector2 armOffset = new Vector2(12.125, 20.5);
+    // private Vector2 stow, ground, hatch1, hatch2, hatch3, cargoship, cargo1,
+    // cargo2, cargo3, max;
 
     public ArmControl(Arm arm, JoystickController Joy, ButtonPanel panel) {
         this.arm = arm;
@@ -70,23 +73,25 @@ public class ArmControl implements LoopModule {
         elbowTarget = elbowAngle;
         wristAngle = arm.getWristPosition();
         wristTarget = wristAngle;
+        epos = 0;
+        wpos = 0;
         elePos = arm.getElePosition();
         lastTime = System.currentTimeMillis();
 
         arm.enableArmPID();
-        //arm.disableArmPID();
+        // arm.disableArmPID();
         // !!!
-        if(!stowed){
+        if (!stowed) {
             soE = 0;
             soW = 0;
         }
-        if(stowed){
+        if (stowed) {
             this.exitStow();
         }
-        
+
     }
 
-    private void findArmPositions(){
+    private void findArmPositions() {
         SmartDashboard.putNumber("Elbow Angle", elbowAngle);
         SmartDashboard.putNumber("Wrist Angle", wristAngle);
         SmartDashboard.putNumber("Elevator Height", elePos);
@@ -102,85 +107,80 @@ public class ArmControl implements LoopModule {
         elbowInterpolator.init(arm.getElbowPosition(), e);
         wristInterpolator.init(arm.getWristPosition(), w);
     }
-    private void elbowDownInterpolator(double e){
+
+    private void elbowDownInterpolator(double e) {
         elbowDownInterpolator.init(arm.getElbowPosition(), e);
     }
-    private void eleInterpolator(double d){
+
+    private void eleInterpolator(double d) {
         eleInterpolator.init(arm.getElePosition(), d);
     }
-    //combine these two later
+    // combine these two later
 
-    private double angleIncrementer(double j){
-        if(System.currentTimeMillis() > lastTime + 10){
-            if(j>0.1 && elbowTarget < elbowMaxAngle){
+    private double angleIncrementer(double j) {
+        if (System.currentTimeMillis() > lastTime + 10) {
+            if (j > 0.1 && elbowTarget < elbowMaxAngle) {
                 elbowTarget += 1;
-            }
-            else if (j<-0.1 && elbowTarget > elbowMinAngle){
+            } else if (j < -0.1 && elbowTarget > elbowMinAngle) {
                 elbowTarget -= 1;
             }
             lastTime = System.currentTimeMillis();
             elbowAngle = arm.getElbowPosition();
             wristAngle = arm.getWristPosition();
             return elbowTarget;
-        }
-        else {
+        } else {
             elbowAngle = arm.getElbowPosition();
             wristAngle = arm.getWristPosition();
             return arm.getElbowPosition();
         }
     }
 
-    private void manualMove(double d){
-        if(elbowTarget < elbowMaxAngle && elbowTarget >= elbowMinAngle){
+    private void manualMove(double d) {
+        if (elbowTarget < elbowMaxAngle && elbowTarget >= elbowMinAngle) {
             arm.setElbow(d);
             arm.setWrist(-d + hatMod);
         }
     }
 
-    private void wristIncrease(){
-        if (Joy.getHat() == -1){
+    private void wristIncrease() {
+        if (Joy.getHat() == -1) {
             hatMod += 0;
-        } 
-        else if (Joy.getHat() == 180){
+        } else if (Joy.getHat() == 180) {
             hatMod++;
-        }
-        else if (Joy.getHat() == 0){
+        } else if (Joy.getHat() == 0) {
             hatMod--;
         }
     }
 
-
-    private void moveArmTo(double e, double w){
+    private void moveArmTo(double e, double w) {
         armInterpolator(e, w);
-        while(!elbowInterpolator.isFinished() && !wristInterpolator.isFinished()){
-            double epos = elbowInterpolator.get();
-            double wpos = wristInterpolator.get();
-            arm.setElbow(epos);
-            elbowTarget = e;
-            arm.setWrist(wpos);
-            wristTarget = w;
-        }
+        elbowTarget = e;
+        wristTarget = w;
+        /* double epos = elbowInterpolator.get();
+        double wpos = wristInterpolator.get();
+        arm.setElbow(epos);
+        arm.setWrist(wpos); */
     }
 
-    private void moveEleTo(double d){
+    private void moveEleTo(double d) {
         this.eleInterpolator(d);
-        while(!eleInterpolator.isFinished()){
-            double epos = eleInterpolator.get();
-            arm.setEle(epos);
+        while (!eleInterpolator.isFinished()) {
+            elpos = eleInterpolator.get();
+            arm.setEle(elpos);
         }
     }
 
-    //connect them
+    // connect them
 
-    private void exitStow(){
+    private void exitStow() {
         moveEleTo(-5);
-        if(System.currentTimeMillis() > lastTime + 10){
-            moveArmTo(15.85718 + soE ,0.5714277 + soW);
+        if (System.currentTimeMillis() > lastTime + 10) {
+            moveArmTo(15.85718 + soE, 0.5714277 + soW);
             done = true;
             lastTime = System.currentTimeMillis();
         }
-        if (done && System.currentTimeMillis() > lastTime + 10){
-            moveArmTo(15.85718 + soE,0.5714277 + soW);
+        if (done && System.currentTimeMillis() > lastTime + 10) {
+            moveArmTo(15.85718 + soE, 0.5714277 + soW);
             moveEleTo(-1.5);
         }
     }
@@ -188,147 +188,116 @@ public class ArmControl implements LoopModule {
     @Override
     public void update(long delta) {
 
-        /* if(Math.abs(Joy.getYAxis()) > 0 || Joy.getHat() != -1){
-            this.manualMove(angleIncrementer(Joy.getYAxis()));
-            this.wristIncrease();
-        } */
+        /*
+         * if(Math.abs(Joy.getYAxis()) > 0 || Joy.getHat() != -1){
+         * this.manualMove(angleIncrementer(Joy.getYAxis())); this.wristIncrease(); }
+         */
 
         this.findArmPositions();
 
-        /* if(panel.getButton(9)){
-            if(!(elePos < -1.75 && elePos > -1.25)){
-                moveEleTo(-1.5);
-            }
-            moveArmTo(47.3806 + soE, 44.1902 + soW);
-            panel.lastButton = 9;
-        }
-        //hatch1 ^
-        if(panel.getButton(5)){
-            if(!(elePos < -1.75 && elePos > -1.25)){
-                moveEleTo(-1.5);
-            }
-            moveArmTo(15.85718 + soE,0.5714277 + soW);
-            panel.lastButton = 5;
-        }
-        //^float/cargo intake pos, ~.5 in off the ground
-        if(panel.getButton(6)){
-            if(!(elePos < -1.75 && elePos > -1.25)){
-                moveEleTo(-1.5);
-            }
-            moveArmTo(21.28582 + soE, -7.0476122 + soW);
-            panel.lastButton = 6;
-        }
-        //^ the hatch intake position ~1in off the ground ;; also needs to reverse intake rollers
-        if(panel.getButton(3)){
-            if(!(elePos < -1.75 && elePos > -1.25)){
-                moveEleTo(-1.5);
-            }
-            moveArmTo(68.713668 + soE, -18.47626 + soW);
-            panel.lastButton = 3;
-        }
-        //cargo1^
-        if(panel.getButton(2)){
-            if(!(elePos < -1.75 && elePos > -1.25)){
-                moveEleTo(-1.5);
-            }
-            moveArmTo(128.0 + soE, -55.428165 + soW);
-            panel.lastButton = 2;
-        }
-        //cargo2^
-        if(panel.getButton(1)){
-            if(!(elePos < -21.5 && elePos > -20.5)){
-                moveEleTo(-21);
-            }
-            moveArmTo(127.3835 + soE, -71.9 + soW);
-            panel.lastButton = 1;
-        }
-        //cargo3^
-        if(panel.getButton(8)){
-            if(!(elePos < -21.5 && elePos > -20.5)){
-                moveEleTo(-21);
-            }
-            moveArmTo(29.76192 + soE, 61.42806 + soW);
-            panel.lastButton = 8;
-        }
-        //hatch2^
-        if(panel.getButton(7)){
-            moveArmTo(120.43 + soE, -17.8572 + soW);
-            if(!(elePos < -21.5 && elePos > -20.5)){
-                moveEleTo(-21);
-            }
-            panel.lastButton = 7;
-        } */
+        /*
+         * if(panel.getButton(9)){ if(!(elePos < -1.75 && elePos > -1.25)){
+         * moveEleTo(-1.5); } moveArmTo(47.3806 + soE, 44.1902 + soW); panel.lastButton
+         * = 9; } //hatch1 ^ if(panel.getButton(5)){ if(!(elePos < -1.75 && elePos >
+         * -1.25)){ moveEleTo(-1.5); } moveArmTo(15.85718 + soE,0.5714277 + soW);
+         * panel.lastButton = 5; } //^float/cargo intake pos, ~.5 in off the ground
+         * if(panel.getButton(6)){ if(!(elePos < -1.75 && elePos > -1.25)){
+         * moveEleTo(-1.5); } moveArmTo(21.28582 + soE, -7.0476122 + soW);
+         * panel.lastButton = 6; } //^ the hatch intake position ~1in off the ground ;;
+         * also needs to reverse intake rollers if(panel.getButton(3)){ if(!(elePos <
+         * -1.75 && elePos > -1.25)){ moveEleTo(-1.5); } moveArmTo(68.713668 + soE,
+         * -18.47626 + soW); panel.lastButton = 3; } //cargo1^ if(panel.getButton(2)){
+         * if(!(elePos < -1.75 && elePos > -1.25)){ moveEleTo(-1.5); } moveArmTo(128.0 +
+         * soE, -55.428165 + soW); panel.lastButton = 2; } //cargo2^
+         * if(panel.getButton(1)){ if(!(elePos < -21.5 && elePos > -20.5)){
+         * moveEleTo(-21); } moveArmTo(127.3835 + soE, -71.9 + soW); panel.lastButton =
+         * 1; } //cargo3^ if(panel.getButton(8)){ if(!(elePos < -21.5 && elePos >
+         * -20.5)){ moveEleTo(-21); } moveArmTo(29.76192 + soE, 61.42806 + soW);
+         * panel.lastButton = 8; } //hatch2^ if(panel.getButton(7)){ moveArmTo(120.43 +
+         * soE, -17.8572 + soW); if(!(elePos < -21.5 && elePos > -20.5)){
+         * moveEleTo(-21); } panel.lastButton = 7; }
+         */
 
-        if(panel.getButton(9)){
-            if(!(elePos < -1.75 && elePos > -1.25)){
+        epos = elbowInterpolator.get();
+        wpos = wristInterpolator.get();
+        arm.setElbow(epos);
+        arm.setWrist(wpos);
+        System.out.println(epos);
+        System.out.println(wpos);
+        
+
+        if (panel.getButton(9)) {
+            if (!(elePos < -1.75 && elePos > -1.25)) {
                 moveEleTo(-1.5);
             }
-            moveArmTo(47.3806  , 44.1902);
+            
+            moveArmTo(47.3806, 44.1902);
             panel.lastButton = 9;
         }
-        //hatch1 ^
-        if(panel.getButton(5)){
-            if(!(elePos < -1.75 && elePos > -1.25)){
+        // hatch1 ^
+        if (panel.getButton(5)) {
+            if (!(elePos < -1.75 && elePos > -1.25)) {
                 moveEleTo(-1.5);
             }
-            moveArmTo(15.85718  ,0.5714277  );
+            moveArmTo(15.85718, 0.5714277);
             panel.lastButton = 5;
         }
-        //^float/cargo intake pos, ~.5 in off the ground
-        if(panel.getButton(6)){
-            if(!(elePos < -1.75 && elePos > -1.25)){
+        // ^float/cargo intake pos, ~.5 in off the ground
+        if (panel.getButton(6)) {
+            if (!(elePos < -1.75 && elePos > -1.25)) {
                 moveEleTo(-1.5);
             }
-            moveArmTo(21.28582  , -7.0476122  );
+            moveArmTo(21.28582, -7.0476122);
             panel.lastButton = 6;
         }
-        //^ the hatch intake position ~1in off the ground ;; also needs to reverse intake rollers
-        if(panel.getButton(3)){
-            if(!(elePos < -1.75 && elePos > -1.25)){
+        // ^ the hatch intake position ~1in off the ground ;; also needs to reverse
+        // intake rollers
+        if (panel.getButton(3)) {
+            if (!(elePos < -1.75 && elePos > -1.25)) {
                 moveEleTo(-1.5);
             }
-            moveArmTo(68.713668  , -18.47626  );
+            moveArmTo(68.713668, -18.47626);
             panel.lastButton = 3;
         }
-        //cargo1^
-        if(panel.getButton(2)){
-            if(!(elePos < -1.75 && elePos > -1.25)){
+        // cargo1^
+        if (panel.getButton(2)) {
+            if (!(elePos < -1.75 && elePos > -1.25)) {
                 moveEleTo(-1.5);
             }
-            moveArmTo(128.0  , -55.428165  );
+            moveArmTo(128.0, -55.428165);
             panel.lastButton = 2;
         }
-        //cargo2^
-        if(panel.getButton(1)){
-            if(!(elePos < -21.5 && elePos > -20.5)){
+        // cargo2^
+        if (panel.getButton(1)) {
+            if (!(elePos < -21.5 && elePos > -20.5)) {
                 moveEleTo(-21);
             }
-            moveArmTo(127.3835  , -71.9  );
+            moveArmTo(127.3835, -71.9);
             panel.lastButton = 1;
         }
-        //cargo3^
-        if(panel.getButton(8)){
-            if(!(elePos < -21.5 && elePos > -20.5)){
+        // cargo3^
+        if (panel.getButton(8)) {
+            if (!(elePos < -21.5 && elePos > -20.5)) {
                 moveEleTo(-21);
             }
-            moveArmTo(29.76192  , 61.42806  );
+            moveArmTo(29.76192, 61.42806);
             panel.lastButton = 8;
         }
-        //hatch2^
-        if(panel.getButton(7)){
-            moveArmTo(120.43  , -17.8572  );
-            if(!(elePos < -21.5 && elePos > -20.5)){
+        // hatch2^
+        if (panel.getButton(7)) {
+            moveArmTo(120.43, -17.8572);
+            if (!(elePos < -21.5 && elePos > -20.5)) {
                 moveEleTo(-21);
             }
             panel.lastButton = 7;
         }
 
         //
-        if(Joy.getButton(11)){
+        if (Joy.getButton(11)) {
             System.out.println("Elbow angle: " + elbowAngle);
             System.out.println("Wrist angle" + wristAngle);
         }
         //
-        
+
     }
 }
