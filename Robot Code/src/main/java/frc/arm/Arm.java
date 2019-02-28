@@ -42,7 +42,6 @@ public class Arm {
         // this shit is wrong v
         //eleRatio = 0.378371;
         //units still arent exactly in inches, what is wrong with ratio?:
-        //
         eleRatio = ((1/14.5384615) * 1.751) * Math.PI;
         //1:7 -> 26:54
         //sprocket diam = 1.751
@@ -53,11 +52,14 @@ public class Arm {
         wristMotor = new SparkMaxPID(RobotMap.wristMotor, MotorType.kBrushless);
         eleMotor = new SparkMaxPID(RobotMap.eleMotor, MotorType.kBrushless);
 
-        //all of these need tuning oh boy
         elbowPID = new PIDController(0.1,0.0000005,0.15,.01355871, elbowMotor, elbowMotor);
         // ff: 1% of 1.55697115 (w/ change: .01255871)
         wristPID = new PIDController(0.1,0,0, wristMotor, wristMotor);
         elePID = new PIDController(0.1,0.000001,0.1,.00125, eleMotor, eleMotor);
+
+        // elbowPID = new PIDController(0.1,0,0.15,0, elbowMotor, elbowMotor);
+        // wristPID = new PIDController(0.1,0,0.15, wristMotor, wristMotor);
+        // elePID = new PIDController(0,0,0,0, eleMotor, eleMotor);
        
     }
 
@@ -201,6 +203,12 @@ public class Arm {
 
     public double getEleMotorPos(){
         return eleMotor.getEncoder().getPosition();
+    }
+
+    public void encoderReset(){
+        eleMotor.setEncPosition(0);
+        wristMotor.setEncPosition(0);
+        eleMotor.setEncPosition(0);
     }
 
     public void setHatchIntake(double n) {
