@@ -11,11 +11,11 @@ public class DriveControl implements LoopModule{
 
     private final DriveBase base;
 
-    private final double rSpeed = 125;
+    private final double rSpeed = 25;
     //private final PigeonIMU gyro;
     private final XBoxController controller;
 
-    private final double speed = .25;
+    private final double speed = .1;
 
     public DriveControl(DriveBase base, XBoxController controller) {
         this.base = base;
@@ -57,7 +57,7 @@ public class DriveControl implements LoopModule{
     }
 
     public void arcadeControl() {
-        double targetSpeed = controller.getStickRX() * rSpeed;
+        double targetSpeed = -(controller.getStickRX() * rSpeed);
 		double turnSpeed = targetSpeed * .01;
 		base.drive(controller.getStickLY() + turnSpeed, controller.getStickLY() - turnSpeed);
     }
