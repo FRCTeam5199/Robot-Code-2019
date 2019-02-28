@@ -27,13 +27,13 @@ public class GrabberControl implements LoopModule {
     @Override
     public void init() {
         grabber.setGrabber(false);
+        grabber.setIntake(0);
         hasHatch = false;
         lastTime = System.currentTimeMillis();
         lastButton = -1;
     }
 
     private boolean groundPickupActive () {
-        
         if (lastButton == 3 || lastButton == 6) {
             return true;
         }
@@ -44,7 +44,15 @@ public class GrabberControl implements LoopModule {
     public void update(long delta) {
         
         // Cargo: Joystick
-        if (Joy.getHat() != -1){
+        if (Joy.hatUp()) {
+			grabber.setIntake(1);
+		} else if (Joy.hatDown()) {
+			grabber.setIntake(-1);
+		} else {
+			grabber.setIntake(0);
+        }
+
+        /* if (Joy.getHat() != -1){
             if (Joy.getHat() == 180){
                 grabber.setIntake(1);
             }
@@ -54,7 +62,7 @@ public class GrabberControl implements LoopModule {
         }
         else if (Joy.getHat() == -1){
             grabber.setIntake(0);
-        }
+        } */
 
         // Hatch: Trigger
         if (Joy.getButtonDown(1)){
@@ -71,7 +79,6 @@ public class GrabberControl implements LoopModule {
             }
 
             SmartDashboard.putBoolean("Hatch", hasHatch);
-        //     SmartDashboard.putNumber("lastTime", lastTime);
         }
 
         if (System.currentTimeMillis() > lastTime + 200 && !hasHatch) {
@@ -79,6 +86,11 @@ public class GrabberControl implements LoopModule {
             hasHatch = false;
             lastTime = System.currentTimeMillis();
         }
+
+        /* if (Joy.getButtonDown(1)) {
+			hasHatch = !hasHatch;
+		}
+		grabber.setGrabber(hasHatch); */
             
     }
 }

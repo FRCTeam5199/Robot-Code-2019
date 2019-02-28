@@ -60,7 +60,7 @@ public class Robot extends TimedRobot {
         base = new DriveBase();
 
         armControl = new ArmControl(arm, Joy, panel);
-        grabberControl = new GrabberControl(grabber, Joy);
+        grabberControl = new GrabberControl(grabber, Joy, panel);
         liftControl = new LiftControl(lift, panel);
         driveControl = new DriveControl(base, Xbox);
 
