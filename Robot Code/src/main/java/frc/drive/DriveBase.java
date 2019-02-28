@@ -52,12 +52,18 @@ public class DriveBase {
     }
 
     public double[] getGyro() {
-        //gyro.getRawGyro(gyroXYZ);
-        gyro.getAccumGyro(gyroXYZ);
+        gyro.getRawGyro(gyroXYZ);
+        //gyro.getAccumGyro(gyroXYZ);
         //gyro.getFusedHeading();
         //System.out.println(gyroXYZ.toString());
         //System.out.println(gyro.getFusedHeading());
         return gyroXYZ;
+    }
+
+    public void printGyroVals(){
+        System.out.println("Gyro X: " + gyroXYZ[0]);
+        System.out.println("Gyro Y: " + gyroXYZ[1]);
+        System.out.println("Gyro Z: " + gyroXYZ[2]);
     }
 
     public double getGyroRate(){
