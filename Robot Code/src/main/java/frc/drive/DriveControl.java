@@ -28,14 +28,6 @@ public class DriveControl implements LoopModule{
 
     }
 
-    @Override
-    public void update(long delta){
-        base.gearChange(controller.getButton(6));
-        //tankControl();
-        arcadeControl();
-        base.getGyro();
-    }
-
     public void tankControl() {
 		double speedMultiplier = speed;
 		double right = controller.getStickRY();
@@ -72,4 +64,13 @@ public class DriveControl implements LoopModule{
     public DriveBase getBase() {
         return base;
     }
+
+    @Override
+    public void update(long delta){
+        base.gearChange(controller.getButton(6));
+        //tankControl();
+        arcadeControl();
+        base.getGyro();
+    }
+
 }

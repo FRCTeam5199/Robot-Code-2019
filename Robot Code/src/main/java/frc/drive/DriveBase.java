@@ -67,7 +67,8 @@ public class DriveBase {
     }
 
     public double getGyroRate(){
-        return 0.0;
+        return gyroXYZ[0];
+        //0 is raw gyro rate on 'x' plane
     }
 
     public double getEncoderLPos() {
