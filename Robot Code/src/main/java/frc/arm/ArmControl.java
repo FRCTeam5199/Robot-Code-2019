@@ -19,6 +19,7 @@ public class ArmControl implements LoopModule {
 
     //
     private double elePos = 0;
+    private double eleTarget = 0;
     private double eleMotorPos;
     // eleTop : -31.053, loss @ bottom: 0.622-0.854
     // The max height of the elevator is in arbitrary units rn, something is wrong
@@ -163,11 +164,10 @@ public class ArmControl implements LoopModule {
     }
 
     private void moveEleTo(double d) {
-        this.eleInterpolator(d);
-        while (!eleInterpolator.isFinished()) {
-            elpos = eleInterpolator.get();
-            arm.setEle(elpos);
-        }
+        eleInterpolator(d);
+        eleTarget = d;
+        /* elpos = eleInterpolator.get();
+        arm.setEle(elpos); */
     }
 
     // connect them
@@ -220,8 +220,10 @@ public class ArmControl implements LoopModule {
 
         epos = elbowInterpolator.get();
         wpos = wristInterpolator.get();
+        elpos = eleInterpolator.get();
         arm.setElbow(epos);
         arm.setWrist(wpos);
+        arm.setEle(elpos);
         System.out.println(epos);
         System.out.println(wpos);
         
