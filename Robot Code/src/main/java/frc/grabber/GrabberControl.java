@@ -15,6 +15,7 @@ public class GrabberControl implements LoopModule {
     private final ButtonPanel panel;
 
     private boolean hasHatch;
+    //private boolean guideOn;
     private double lastTime;
     private int lastButton;
 
@@ -90,7 +91,12 @@ public class GrabberControl implements LoopModule {
         /* if (Joy.getButtonDown(1)) {
 			hasHatch = !hasHatch;
 		}
-		grabber.setGrabber(hasHatch); */
+        grabber.setGrabber(hasHatch); */
+        
+        /* if(panel.getButtonDown(4)){
+            guideOn = !guideOn;
+        }
+        grabber.setHatchGuide(guideOn); */
             
     }
 }
