@@ -52,28 +52,26 @@ public class DriveBase {
     }
 
     public void initGyro(){
-        
+        //gyro.configTemperatureCompensationEnable(bTempCompEnable, timeoutMs)
     }
 
     public double[] getGyro() {
+        initGyro();
         gyro.getRawGyro(gyroXYZ);
         //gyro.getAccumGyro(gyroXYZ);
-        //gyro.getFusedHeading();
         //System.out.println(gyroXYZ.toString());
-        //System.out.println(gyro.getFusedHeading());
         return gyroXYZ;
     }
 
     public void printGyroVals(){
-        //gyro needs to be initialized
-        System.out.println("Gyro X: " + gyroXYZ[0]);
-        System.out.println("Gyro Y: " + gyroXYZ[1]);
-        System.out.println("Gyro Z: " + gyroXYZ[2]);
+        System.out.println("Gyro X: " + getGyro()[0]);
+        System.out.println("Gyro Y: " + getGyro()[1]);
+        System.out.println("Gyro Z: " + getGyro()[2]);
     }
 
     public double getGyroRate(){
-        return gyroXYZ[0];
-        //0 is raw gyro rate on 'x' plane, which I think is what is turning
+        return getGyro()[0];
+        //0 is raw gyro rate on 'x' plane (yaw), which I think is what is turning
     }
 
     public double getEncoderLPos() {
