@@ -15,7 +15,7 @@ public class DriveControl implements LoopModule{
     //private final PigeonIMU gyro;
     private final XBoxController controller;
 
-    private final double speed = .05;
+    private final double speed = .1;
 
     public DriveControl(DriveBase base, XBoxController controller) {
         this.base = base;
@@ -36,7 +36,7 @@ public class DriveControl implements LoopModule{
 		// Right trigger boost
 		speedMultiplier += (1 - speed) * controller.getRTrigger();
 		right *= speedMultiplier;
-		left *= speedMultiplier;
+        left *= speedMultiplier;
 
 		// Left trigger straighten
 		double avg = (right + left) / 2;
@@ -51,7 +51,11 @@ public class DriveControl implements LoopModule{
     public void arcadeControl() {
         double targetSpeed = -(controller.getStickRX() * rSpeed);
 		double turnSpeed = targetSpeed * .01;
-		base.drive(controller.getStickLY() + turnSpeed, controller.getStickLY() - turnSpeed);
+        base.drive(controller.getStickLY() + turnSpeed, controller.getStickLY() - turnSpeed);
+        
+        // Right trigger slow
+        
+        
     }
     
     /* public void arcadeControlAssisted() {
@@ -70,7 +74,7 @@ public class DriveControl implements LoopModule{
         base.gearChange(controller.getButton(6));
         //tankControl();
         arcadeControl();
-        base.printGyroVals();
+        //base.printGyroVals();
     }
 
 }

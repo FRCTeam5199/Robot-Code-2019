@@ -40,7 +40,7 @@ public class DriveBase {
 
         gyro = new PigeonIMU(RobotMap.CANGyro);
         gyroXYZ = new double[3];
-        // dont forget to rebias the gyro at startup
+        // dont forget to init & rebias the gyro at startup
 
     }
 
@@ -49,6 +49,10 @@ public class DriveBase {
         leaderR.set(right);
         // left is reversed
    
+    }
+
+    public void initGyro(){
+        
     }
 
     public double[] getGyro() {
@@ -61,6 +65,7 @@ public class DriveBase {
     }
 
     public void printGyroVals(){
+        //gyro needs to be initialized
         System.out.println("Gyro X: " + gyroXYZ[0]);
         System.out.println("Gyro Y: " + gyroXYZ[1]);
         System.out.println("Gyro Z: " + gyroXYZ[2]);
@@ -68,7 +73,7 @@ public class DriveBase {
 
     public double getGyroRate(){
         return gyroXYZ[0];
-        //0 is raw gyro rate on 'x' plane
+        //0 is raw gyro rate on 'x' plane, which I think is what is turning
     }
 
     public double getEncoderLPos() {
