@@ -1,4 +1,4 @@
-package frc.arm;
+package frc.armevator;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.controllers.ButtonPanel;
@@ -10,12 +10,12 @@ import frc.util.Vector2;
 
 import com.revrobotics.ControlType;
 
-public class ArmControl implements LoopModule {
+public class ArmevatorControl implements LoopModule {
 
     private final JoystickController Joy;
     private final ButtonPanel panel;
 
-    private final Arm arm;
+    private final Armevator arm;
 
     //
     private double elePos = 0;
@@ -53,7 +53,7 @@ public class ArmControl implements LoopModule {
     // private Vector2 stow, ground, hatch1, hatch2, hatch3, cargoship, cargo1,
     // cargo2, cargo3, max;
 
-    public ArmControl(Arm arm, JoystickController Joy, ButtonPanel panel) {
+    public ArmevatorControl(Armevator arm, JoystickController Joy, ButtonPanel panel) {
         this.arm = arm;
         this.Joy = Joy;
         this.panel = panel;
@@ -88,6 +88,8 @@ public class ArmControl implements LoopModule {
         }
         if (stowed) {
             this.exitStow();
+            soE = -92.6658478;
+            soW = 27.047672;
         }
 
     }
@@ -174,12 +176,12 @@ public class ArmControl implements LoopModule {
 
     private void exitStow() {
         moveEleTo(-5);
-        if (System.currentTimeMillis() > lastTime + 10) {
+        if (System.currentTimeMillis() > lastTime + 20) {
             moveArmTo(15.85718 + soE, 0.5714277 + soW);
             done = true;
             lastTime = System.currentTimeMillis();
         }
-        if (done && System.currentTimeMillis() > lastTime + 10) {
+        if (done && System.currentTimeMillis() > lastTime + 20) {
             moveArmTo(15.85718 + soE, 0.5714277 + soW);
             moveEleTo(-1.5);
         }
@@ -187,36 +189,18 @@ public class ArmControl implements LoopModule {
 
     @Override
     public void update(long delta) {
-
+        
         /*
          * if(Math.abs(Joy.getYAxis()) > 0 || Joy.getHat() != -1){
          * this.manualMove(angleIncrementer(Joy.getYAxis())); this.wristIncrease(); }
          */
-
+    
+        /* //temp manual ele movement
+        if(Math.abs(Joy.getYAxis()) > 0){
+            arm.moveEle(Joy.getYAxis());
+        }
+ */
         this.findArmPositions();
-
-        /*
-         * if(panel.getButton(9)){ if(!(elePos < -1.75 && elePos > -1.25)){
-         * moveEleTo(-1.5); } moveArmTo(47.3806 + soE, 44.1902 + soW); panel.lastButton
-         * = 9; } //hatch1 ^ if(panel.getButton(5)){ if(!(elePos < -1.75 && elePos >
-         * -1.25)){ moveEleTo(-1.5); } moveArmTo(15.85718 + soE,0.5714277 + soW);
-         * panel.lastButton = 5; } //^float/cargo intake pos, ~.5 in off the ground
-         * if(panel.getButton(6)){ if(!(elePos < -1.75 && elePos > -1.25)){
-         * moveEleTo(-1.5); } moveArmTo(21.28582 + soE, -7.0476122 + soW);
-         * panel.lastButton = 6; } //^ the hatch intake position ~1in off the ground ;;
-         * also needs to reverse intake rollers if(panel.getButton(3)){ if(!(elePos <
-         * -1.75 && elePos > -1.25)){ moveEleTo(-1.5); } moveArmTo(68.713668 + soE,
-         * -18.47626 + soW); panel.lastButton = 3; } //cargo1^ if(panel.getButton(2)){
-         * if(!(elePos < -1.75 && elePos > -1.25)){ moveEleTo(-1.5); } moveArmTo(128.0 +
-         * soE, -55.428165 + soW); panel.lastButton = 2; } //cargo2^
-         * if(panel.getButton(1)){ if(!(elePos < -21.5 && elePos > -20.5)){
-         * moveEleTo(-21); } moveArmTo(127.3835 + soE, -71.9 + soW); panel.lastButton =
-         * 1; } //cargo3^ if(panel.getButton(8)){ if(!(elePos < -21.5 && elePos >
-         * -20.5)){ moveEleTo(-21); } moveArmTo(29.76192 + soE, 61.42806 + soW);
-         * panel.lastButton = 8; } //hatch2^ if(panel.getButton(7)){ moveArmTo(120.43 +
-         * soE, -17.8572 + soW); if(!(elePos < -21.5 && elePos > -20.5)){
-         * moveEleTo(-21); } panel.lastButton = 7; }
-         */
 
         epos = elbowInterpolator.get();
         wpos = wristInterpolator.get();
@@ -224,16 +208,16 @@ public class ArmControl implements LoopModule {
         arm.setElbow(epos);
         arm.setWrist(wpos);
         arm.setEle(elpos);
-        System.out.println(epos);
-        System.out.println(wpos);
+        // System.out.println(epos);
+        // System.out.println(wpos);
         
-
+        //FOR THE REAL BOT: ele maxheight is ~-36.5 for some weird reason, gearing must be different?
         if (panel.getButton(9)) {
             if (!(elePos < -1.75 && elePos > -1.25)) {
                 moveEleTo(-1.5);
             }
             
-            moveArmTo(47.3806, 44.1902);
+            moveArmTo(47.3806 + soE, 44.1902 + soW);
             panel.lastButton = 9;
         }
         // hatch1 ^
@@ -241,15 +225,16 @@ public class ArmControl implements LoopModule {
             if (!(elePos < -1.75 && elePos > -1.25)) {
                 moveEleTo(-1.5);
             }
-            moveArmTo(15.85718, 0.5714277);
+            moveArmTo(15.85718 + soE, 0.5714277 + soW);
             panel.lastButton = 5;
         }
         // ^float/cargo intake pos, ~.5 in off the ground
         if (panel.getButton(6)) {
             if (!(elePos < -1.75 && elePos > -1.25)) {
-                moveEleTo(-1.5);
+                // moveEleTo(-1.5);
+                moveEleTo(0);
             }
-            moveArmTo(21.28582, -7.0476122);
+            moveArmTo(21.28582 + soE, -7.0476122 + soW);
             panel.lastButton = 6;
         }
         // ^ the hatch intake position ~1in off the ground ;; also needs to reverse
@@ -258,7 +243,7 @@ public class ArmControl implements LoopModule {
             if (!(elePos < -1.75 && elePos > -1.25)) {
                 moveEleTo(-1.5);
             }
-            moveArmTo(68.713668, -18.47626);
+            moveArmTo(68.713668 + soE, -18.47626 + soW);
             panel.lastButton = 3;
         }
         // cargo1^
@@ -266,7 +251,7 @@ public class ArmControl implements LoopModule {
             if (!(elePos < -1.75 && elePos > -1.25)) {
                 moveEleTo(-1.5);
             }
-            moveArmTo(128.0, -55.428165);
+            moveArmTo(128.0 + soE, -55.428165 + soW);
             panel.lastButton = 2;
         }
         // cargo2^
@@ -274,7 +259,7 @@ public class ArmControl implements LoopModule {
             if (!(elePos < -21.5 && elePos > -20.5)) {
                 moveEleTo(-21);
             }
-            moveArmTo(127.3835, -71.9);
+            moveArmTo(127.3835 + soE, -71.9 + soW);
             panel.lastButton = 1;
         }
         // cargo3^
@@ -282,12 +267,12 @@ public class ArmControl implements LoopModule {
             if (!(elePos < -21.5 && elePos > -20.5)) {
                 moveEleTo(-21);
             }
-            moveArmTo(29.76192, 61.42806);
+            moveArmTo(29.76192 + soE, 61.42806 + soW);
             panel.lastButton = 8;
         }
         // hatch2^
         if (panel.getButton(7)) {
-            moveArmTo(120.43, -17.8572);
+            moveArmTo(120.43 + soE, -17.8572 + soW);
             if (!(elePos < -21.5 && elePos > -20.5)) {
                 moveEleTo(-21);
             }

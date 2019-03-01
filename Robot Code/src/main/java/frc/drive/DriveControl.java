@@ -15,7 +15,7 @@ public class DriveControl implements LoopModule{
     //private final PigeonIMU gyro;
     private final XBoxController controller;
 
-    private final double speed = .1;
+    private final double speed = .05;
 
     public DriveControl(DriveBase base, XBoxController controller) {
         this.base = base;
@@ -70,7 +70,7 @@ public class DriveControl implements LoopModule{
         base.gearChange(controller.getButton(6));
         //tankControl();
         arcadeControl();
-        base.getGyro();
+        base.printGyroVals();
     }
 
 }

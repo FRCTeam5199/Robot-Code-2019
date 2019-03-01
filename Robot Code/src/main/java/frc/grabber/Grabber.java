@@ -22,7 +22,7 @@ public class Grabber {
         intake = new VictorSPX(RobotMap.intakeMotor);
         //hatchGuide = new Solenoid(RobotMap.hatchGuidePiston);
 
-        intake.setNeutralMode(NeutralMode.Coast);
+        intake.setNeutralMode(NeutralMode.Brake);
     }
 
     public void setGrabber(boolean b) {

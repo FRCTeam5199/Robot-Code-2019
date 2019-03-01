@@ -21,8 +21,8 @@ import frc.controllers.JoystickController;
 import frc.robot.RobotMap;
 import frc.networking.RemoteOutput;
 import frc.util.ClockRegulator;
-import frc.arm.Arm;
-import frc.arm.ArmControl;
+import frc.armevator.Armevator;
+import frc.armevator.ArmevatorControl;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -34,11 +34,11 @@ public class Robot extends TimedRobot {
 
     public static RemoteOutput nBroadcaster;
     public static Camera camera;
-    private Arm arm;
+    private Armevator arm;
     private Grabber grabber;
     private Lift lift;
     private DriveBase base;
-    private ArmControl armControl;
+    private ArmevatorControl armControl;
     private GrabberControl grabberControl;
     private LiftControl liftControl;
     private DriveControl driveControl;
@@ -54,12 +54,12 @@ public class Robot extends TimedRobot {
         Xbox = new XBoxController(0);
         Joy = new JoystickController(1);
         panel = new ButtonPanel(2);
-        arm = new Arm();
+        arm = new Armevator();
         grabber = new Grabber();
         lift = new Lift();
         base = new DriveBase();
 
-        armControl = new ArmControl(arm, Joy, panel);
+        armControl = new ArmevatorControl(arm, Joy, panel);
         grabberControl = new GrabberControl(grabber, Joy, panel);
         liftControl = new LiftControl(lift, panel);
         driveControl = new DriveControl(base, Xbox);
