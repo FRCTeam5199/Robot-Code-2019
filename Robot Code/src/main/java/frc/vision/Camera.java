@@ -32,6 +32,7 @@ public class Camera implements Runnable {
 		thread = new Thread(this, "Camera thread");
 		thread.start();
 		isAlive = true;
+		//you might need a second thread, it think cam2 is just overriding the instance rn
 	}
 
 	@Override
