@@ -44,8 +44,10 @@ public class Lift{
         // the switch probabaly returns false when open. In that case, remove the '!'
         while(!liftLimitSwitch.get()){
             winchMotor.set(ControlMode.PercentOutput, 0);
+            //not gonna brake it ?
             try {
                 Thread.sleep(500);
+                //we cant thread sleep on the rio or stuff gets fucked up use system time and a delay
             } catch(InterruptedException e) {
                 System.out.println("Man, I dont EVEN have an idea.");
             }
