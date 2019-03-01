@@ -36,8 +36,14 @@ public class Armevator {
 
     public Armevator(){
         // these ratios are a little off
-        elbowRatio = 720/343;
+        //old elbow ratio 7:1 *2 + 24:84 /360 v (in degrees)
+        // elbowRatio = 720/343;
+        //new elbow ratio 7:1 + 5:1 + 24:84 /360 v
+        // elbowRatio = 144/49;
+        //for some reason the fraction does not work wtf!?
+        elbowRatio = 2.9387755102040816326530612244898;
         wristRatio = 120/49;
+
         //                    |
         // this shit is wrong v
         //eleRatio = 0.378371;

@@ -44,7 +44,9 @@ public class ArmevatorControl implements LoopModule {
     double epos, wpos, elpos;
     //
     private boolean done;
+    // ****
     private boolean stowed = false;
+    // **** 
     private Interpolator eleInterpolator, elbowInterpolator, wristInterpolator, elbowDownInterpolator;
     // private double[] cargo1,cargo2,cargo3,intake,hatch1,hatch2,hatch3,travel;
 
@@ -60,7 +62,8 @@ public class ArmevatorControl implements LoopModule {
 
         eleInterpolator = new Interpolator(3);
         elbowInterpolator = new Interpolator(10);
-        elbowDownInterpolator = new Interpolator(5);
+        //elbowDownInterpolator = new Interpolator(5);
+        //ff solves this instead
         wristInterpolator = new Interpolator(10);
 
     }
@@ -140,8 +143,8 @@ public class ArmevatorControl implements LoopModule {
 
     private void manualMove(double d) {
         if (elbowTarget < elbowMaxAngle && elbowTarget >= elbowMinAngle) {
-            arm.setElbow(d);
-            arm.setWrist(-d + hatMod);
+            arm.setElbow(epos + d);
+            arm.setWrist(wpos + -d + hatMod);
         }
     }
 
@@ -212,7 +215,7 @@ public class ArmevatorControl implements LoopModule {
         // System.out.println(wpos);
         
         //FOR THE REAL BOT: ele maxheight is ~-36.5 for some weird reason, gearing must be different?
-        if (panel.getButton(9)) {
+        if (Joy.getButton(9)) {
             if (!(elePos < -1.75 && elePos > -1.25)) {
                 moveEleTo(-1.5);
             }
@@ -228,7 +231,7 @@ public class ArmevatorControl implements LoopModule {
             moveArmTo(15.85718 + soE, 0.5714277 + soW);
             panel.lastButton = 5;
         }
-        // ^float/cargo intake pos, ~.5 in off the ground
+        // ^float/cargo intake pos, ~1 in off the ground with a bit of a wrist tilt down
         if (panel.getButton(6)) {
             if (!(elePos < -1.75 && elePos > -1.25)) {
                 // moveEleTo(-1.5);
@@ -237,8 +240,8 @@ public class ArmevatorControl implements LoopModule {
             moveArmTo(21.28582 + soE, -7.0476122 + soW);
             panel.lastButton = 6;
         }
-        // ^ the hatch intake position ~1in off the ground ;; also needs to reverse
-        // intake rollers
+        // ^ the hatch intake position <~.5in off the ground ;; also needs to reverse
+        // intake rollers [<-- done]
         if (panel.getButton(3)) {
             if (!(elePos < -1.75 && elePos > -1.25)) {
                 moveEleTo(-1.5);
@@ -278,6 +281,7 @@ public class ArmevatorControl implements LoopModule {
             }
             panel.lastButton = 7;
         }
+        // hatch3^
 
         //
         if (Joy.getButton(11)) {
