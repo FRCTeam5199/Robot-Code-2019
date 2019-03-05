@@ -56,13 +56,13 @@ public class LiftControl implements LoopModule{
         ////temp (needed to override limit switch stuff)
 
         if(panel.getButtonDown(10)){
-            liftUp();
+            liftDown();
         }
         else if(panel.getButtonUp(10)){
             lift.winchNoMove();
         }
         if(panel.getButtonDown(12)){
-            liftDown();
+            liftUp();
         }
         else if (panel.getButtonUp(12)){
             lift.winchNoMove();

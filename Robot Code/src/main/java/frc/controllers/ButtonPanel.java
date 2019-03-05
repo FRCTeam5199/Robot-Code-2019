@@ -8,7 +8,7 @@ public class ButtonPanel{
 
 	public ButtonPanel(int n) {
 		button = new Joystick(n);
-		lastButton = 0;
+		lastButton = -1;
 	}
 	public boolean getButton(int n) {
 		return button.getRawButton(n);

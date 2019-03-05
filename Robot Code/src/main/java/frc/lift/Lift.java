@@ -27,7 +27,7 @@ public class Lift{
             liftDriveMotor.set(ControlMode.PercentOutput, -.5);
     }
     public void winchUp(){
-        winchMotor.set(ControlMode.PercentOutput, .7);
+        winchMotor.set(ControlMode.PercentOutput, .8);
         winchMotor.setNeutralMode(NeutralMode.Brake);
     }
     public void winchNoMove(){
@@ -36,7 +36,7 @@ public class Lift{
     }
 
     public void winchDown(){
-        winchMotor.set(ControlMode.PercentOutput, -.1);
+        winchMotor.set(ControlMode.PercentOutput, -.66);
         winchMotor.setNeutralMode(NeutralMode.Coast);
     }
     public void winchHover(){
@@ -47,7 +47,7 @@ public class Lift{
             //not gonna brake it ?
             try {
                 Thread.sleep(500);
-                //we cant thread sleep on the rio or stuff gets fucked up use system time and a delay
+                //we cant thread sleep on the rio or stuff gets fucked up use system time + a delay
             } catch(InterruptedException e) {
                 System.out.println("Man, I dont EVEN have an idea.");
             }

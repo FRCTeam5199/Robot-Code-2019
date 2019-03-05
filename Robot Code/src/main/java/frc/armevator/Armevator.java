@@ -61,12 +61,10 @@ public class Armevator {
         elbowPID = new PIDController(0.1,0.0000005,0.156,-.01355871, elbowMotor, elbowMotor);
         // ff: 1% of 1.55697115 (w/ change: .01255871)
         wristPID = new PIDController(0.1,0,0, wristMotor, wristMotor);
-        elePID = new PIDController(0.1,0.000001,0.1,.00125, eleMotor, eleMotor);
+        //wrong somehow? v (old p was: 0.125) (old d was .152) (old i was 1*10^-5) (old ff = 0.0125, calculate a new one.)
+        elePID = new PIDController(0.125,0.00000001,0.15225,0.0125, eleMotor, eleMotor);
+        //tiny oscillations at ends of min to max,interpolator needs a maxV
 
-        // elbowPID = new PIDController(0.1,0,0.15,0, elbowMotor, elbowMotor);
-        // wristPID = new PIDController(0.1,0,0.15, wristMotor, wristMotor);
-        // elePID = new PIDController(0,0,0,0, eleMotor, eleMotor);
-       
     }
 
     public void initAdjustPID(){
@@ -212,7 +210,7 @@ public class Armevator {
     }
 
     public void encoderReset(){
-        eleMotor.setEncPosition(0);
+        elbowMotor.setEncPosition(0);
         wristMotor.setEncPosition(0);
         eleMotor.setEncPosition(0);
     }

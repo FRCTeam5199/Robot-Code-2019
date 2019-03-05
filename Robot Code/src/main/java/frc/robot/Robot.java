@@ -66,6 +66,11 @@ public class Robot extends TimedRobot {
 
     }
 
+/*     @Override
+    public void teleopInit() {
+
+    } */
+
     @Override
     public void teleopPeriodic() {
         
@@ -79,9 +84,21 @@ public class Robot extends TimedRobot {
 
         bigLoop.init();
         
-        while (isEnabled() && isOperatorControl()) {
+        while (isEnabled() && (isOperatorControl() || isAutonomous())) {
             bigLoop.update();
+            
         }
         bigLoop.cleanUp();
+    }
+
+    @Override
+    public void autonomousInit() {
+        arm.encoderReset();
+        armControl.exitStow();
+    }
+
+    @Override
+    public void autonomousPeriodic() {
+        teleopPeriodic();
     }
 }

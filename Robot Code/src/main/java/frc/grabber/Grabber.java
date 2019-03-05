@@ -2,9 +2,6 @@ package frc.grabber;
 
 import edu.wpi.first.wpilibj.Solenoid;
 import frc.robot.RobotMap;
-
-import java.awt.Panel;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
@@ -20,7 +17,7 @@ public class Grabber {
         gripperPiston = new Solenoid(RobotMap.gripperPiston);
         pokePistons = new Solenoid(RobotMap.pokePistons);
         intake = new VictorSPX(RobotMap.intakeMotor);
-        //hatchGuide = new Solenoid(RobotMap.hatchGuidePiston);
+        hatchGuidePiston = new Solenoid(RobotMap.vPiston);
 
         intake.setNeutralMode(NeutralMode.Brake);
     }
@@ -37,7 +34,7 @@ public class Grabber {
         intake.set(ControlMode.PercentOutput, n);
     }
 
-    // public void setHatchGuide(boolean b) {
-    //     hatchGuide.set(b);
-    // }    
+    public void setHatchGuide(boolean b) {
+        hatchGuidePiston.set(b);
+    }    
 }
