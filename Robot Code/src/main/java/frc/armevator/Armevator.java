@@ -59,9 +59,8 @@ public class Armevator {
         eleMotor = new SparkMaxPID(RobotMap.eleMotor, MotorType.kBrushless);
 
         elbowPID = new PIDController(0.1,0.0000005,0.156,-.01355871, elbowMotor, elbowMotor);
-        // ff: 1% of 1.55697115 (w/ change: .01255871)
+        // ff: 1% of 1.55697115 (w/ mod: .01355871)
         wristPID = new PIDController(0.1,0,0, wristMotor, wristMotor);
-        //wrong somehow? v (old p was: 0.125) (old d was .152) (old i was 1*10^-5) (old ff = 0.0125, calculate a new one.)
         elePID = new PIDController(0.125,0.00000001,0.15225,0.0125, eleMotor, eleMotor);
         //tiny oscillations at ends of min to max,interpolator needs a maxV
 
@@ -116,8 +115,6 @@ public class Armevator {
         if((wi != wkI)) { wristPID.setI(wi); wkI = wi; }
         if((wd != wkD)) { wristPID.setD(wd); wkD = wd; }
         if((wff != wkFF)) { wristPID.setF(wff); wkFF = wff;}
-
-        //add the rest
 
     }
     
