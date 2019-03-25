@@ -6,16 +6,22 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.RobotMap;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Servo;
 
 public class Lift{
     private VictorSPX winchMotor;
     private VictorSPX liftDriveMotor;
     public DigitalInput liftLimitSwitch;
+    private Solenoid locks;
+    private Servo clutch;
 
     public Lift(){
         winchMotor = new VictorSPX(RobotMap.winchMotor);
         liftDriveMotor = new VictorSPX(RobotMap.liftDriveMotor);
         liftLimitSwitch = new DigitalInput(RobotMap.liftLimitSwitch);
+        locks = new Solenoid(RobotMap.climbPistons);
+        clutch = new Servo(RobotMap.clutchServo);
     }
     public void setLiftDriveFWD(){
             liftDriveMotor.set(ControlMode.PercentOutput, .5);
@@ -27,7 +33,7 @@ public class Lift{
             liftDriveMotor.set(ControlMode.PercentOutput, -.5);
     }
     public void winchUp(){
-        winchMotor.set(ControlMode.PercentOutput, .8);
+        winchMotor.set(ControlMode.PercentOutput, 1);
         winchMotor.setNeutralMode(NeutralMode.Brake);
     }
     public void winchNoMove(){
@@ -36,9 +42,26 @@ public class Lift{
     }
 
     public void winchDown(){
-        winchMotor.set(ControlMode.PercentOutput, -.66);
+        winchMotor.set(ControlMode.PercentOutput, -1);
         winchMotor.setNeutralMode(NeutralMode.Coast);
     }
+
+    public void locksOn(){
+        locks.set(true);
+    }
+
+    public void clutchOn(){
+        clutch.setAngle(60);
+    }
+
+    public void setClutch(double a){
+        clutch.setAngle(a);
+    }
+
+    public double getClutchPos(){
+        return clutch.get();
+    }
+
     public void winchHover(){
         //Currently enters hover mode if the limit switch returns false. The switch should return false if it is closed. If this doesnt do what we want,
         // the switch probabaly returns false when open. In that case, remove the '!'
