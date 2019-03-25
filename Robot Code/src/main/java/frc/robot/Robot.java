@@ -66,7 +66,7 @@ public class Robot extends TimedRobot {
 
     }
 
-/*     @Override
+    /* @Override
     public void teleopInit() {
 
     } */
@@ -94,11 +94,41 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         arm.encoderReset();
+        grabber.setGrabber(true);
+        grabberControl.hasHatch = true;
         armControl.exitStow();
     }
+    //init 1 time inits from here for competition
 
     @Override
     public void autonomousPeriodic() {
         teleopPeriodic();
+    }
+
+    @Override
+    public void testInit(){
+        arm.encoderReset();
+        grabber.setGrabber(true);
+        grabberControl.hasHatch = true;
+        // armControl.exitStow();
+    }
+
+    @Override
+    public void testPeriodic(){
+
+        ClockRegulator cl = new ClockRegulator(50);
+        BigLoop bigLoop = new BigLoop(cl);
+
+        // bigLoop.add(liftControl);
+        // bigLoop.add(driveControl);
+        // bigLoop.add(armControl);
+        // bigLoop.add(grabberControl);
+        bigLoop.init();
+        
+        while (isEnabled() && isTest()) {
+            bigLoop.update();
+            
+        }
+        bigLoop.cleanUp();
     }
 }
