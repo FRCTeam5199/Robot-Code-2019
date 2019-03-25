@@ -61,7 +61,8 @@ public class Armevator {
         elbowPID = new PIDController(0.1,0.0000005,0.156,-.01355871, elbowMotor, elbowMotor);
         // ff: 1% of 1.55697115 (w/ mod: .01355871)
         wristPID = new PIDController(0.1,0,0, wristMotor, wristMotor);
-        elePID = new PIDController(0.125,0.00000001,0.15225,0.0125, eleMotor, eleMotor);
+        //elePID = new PIDController(0.125,0.00000001,0.15,0.0125, eleMotor, eleMotor);
+        elePID = new PIDController(0.125,0.00000001,0.12,0.0125, eleMotor, eleMotor);
         //tiny oscillations at ends of min to max,interpolator needs a maxV
 
     }
@@ -128,6 +129,19 @@ public class Armevator {
         elbowMotor.setIdleMode(IdleMode.kBrake);
         wristMotor.setIdleMode(IdleMode.kBrake);
         eleMotor.setIdleMode(IdleMode.kBrake);
+    }
+
+    public void setArmCurrentMax(){
+        elbowMotor.setSmartCurrentLimit(40);
+        wristMotor.setSmartCurrentLimit(30);
+        eleMotor.setSmartCurrentLimit(40);
+    }
+
+    public void setArmRampRate(){
+        // elbowMotor.setClosedLoopRampRate();
+        // wristMotor.setClosedLoopRampRate();
+        // eleMotor.setClosedLoopRampRate();
+        //no val satisifies
     }
 
     public void enableArmPID(){
