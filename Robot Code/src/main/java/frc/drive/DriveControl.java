@@ -11,9 +11,10 @@ public class DriveControl implements LoopModule{
 
     private final DriveBase base;
     //old is 25
-    private final double rSpeed = 35;
+    private final double rSpeed = 45;
+    //used to be 65 OR 55
     private final XBoxController controller;
-    //old is .5
+    //old is .75 OR 7
     private final double speed = .66;
 
     //
@@ -25,7 +26,10 @@ public class DriveControl implements LoopModule{
     }
 
     public void init(){
-
+        base.setDriveCoast();
+        //base.setDriveBrake();
+        base.setDriveCurrentMax();
+        base.initGyro();
     }
 
     public void tankControl() {
@@ -48,22 +52,36 @@ public class DriveControl implements LoopModule{
 		base.drive(right, left);
     }
 
+    public double skim(double v){
+        if (v > 1.0) {
+            return -((v - 1.0) * rSpeed);
+        } else if (v < -1.0) {
+            return -((v + 1.0) * rSpeed);
+        }else{
+            return 0;
+        }
+    }
+
     public void arcadeControl() {
-        double targetSpeed = -(controller.getStickRX() * rSpeed);
+        double targetSpeed = controller.getStickRX() * rSpeed;
 		double turnSpeed = targetSpeed * .01;
         base.drive((controller.getStickLY()*(speed)) + turnSpeed, (controller.getStickLY()*speed) - turnSpeed);
         
-        // Right trigger slow
-        
-        
+       /*  base.drive();
+         */
     }
     
-    /* public void arcadeControlAssisted() {
+    public void arcadeControlAssisted() {
 		double targetSpeed = controller.getStickRX() * rSpeed;
 		double currentSpeed = base.getGyroRate();
 		double turnSpeed = (targetSpeed - currentSpeed) * .01;
-		base.drive(controller.getStickLY() - turnSpeed, controller.getStickLY() + turnSpeed);
-	} */
+		base.drive((controller.getStickLY()*speed) + turnSpeed, (controller.getStickLY()*speed) - turnSpeed);
+    } 
+    
+    public void printSticks(){
+        System.out.println(controller.getStickLX() + " , " + controller.getStickLY());
+        System.out.println(controller.getStickRX() + " , " + controller.getStickRY());
+    }
 
     public DriveBase getBase() {
         return base;
@@ -74,7 +92,9 @@ public class DriveControl implements LoopModule{
         base.gearChange(controller.getButton(6));
         //tankControl();
         arcadeControl();
+        //arcadeControlAssisted();
         //base.printGyroVals();
+        // printSticks();
     }
 
 }
