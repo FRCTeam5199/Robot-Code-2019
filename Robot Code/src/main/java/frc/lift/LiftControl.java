@@ -20,6 +20,7 @@ public class LiftControl implements LoopModule{
     private boolean winchDownButton = false;
     private boolean liftDriveFWD = false;
     private boolean liftDriveBWD = false;
+    private boolean LocksOn, toggle;
 
     public LiftControl(Lift lift, ButtonPanel panel){
         this.lift = lift;
@@ -27,7 +28,9 @@ public class LiftControl implements LoopModule{
     }
 
     public void init(){
-
+        toggle = false;
+        LocksOn = false;
+        lift.setClutch(0);
     }
     public void liftUp(){
         lift.winchUp();
@@ -40,44 +43,45 @@ public class LiftControl implements LoopModule{
     }
     @Override
     public void update(long delta){
-        // if(panel.getButtonDown(RobotMap.climberUp)){
-        //     liftUp();
-        // }
-        // if(panel.getButtonDown(RobotMap.climberDown)){
-        //     liftDown();
-        // }
-        // if(panel.getButtonDown(RobotMap.climberFWD)){
-        //     lift.setLiftDriveFWD();
-        // }
-        // if(panel.getButtonDown(RobotMap.climberBWD)){
-        //     lift.setLiftDriveBWD();
-        // }
-
-        ////temp (needed to override limit switch stuff)
 
         if(panel.getButtonDown(10)){
             liftDown();
+            lift.clutchOn();
+            //toggle the arm clutch servo to drop the ratchet bar^
+            panel.lastButton = 10;
         }
         else if(panel.getButtonUp(10)){
             lift.winchNoMove();
+            
         }
         if(panel.getButtonDown(12)){
             liftUp();
+            panel.lastButton = 12;
         }
         else if (panel.getButtonUp(12)){
             lift.winchNoMove();
         }
         if(panel.getButtonDown(11)){
             lift.setLiftDriveFWD();
+            LocksOn = true;
+            panel.lastButton = 11;
         }
         else if(panel.getButtonUp(11)){
             lift.setLiftDriveOff();
         }
         if (panel.getButtonDown(13)){
             lift.setLiftDriveBWD();
+            panel.lastButton = 13;
         }
         else if (panel.getButtonUp(13)){
             lift.setLiftDriveOff();
         }
+        if(LocksOn){
+            lift.locksOn();
+            LocksOn = false;
+        }
+        //turn on pistons that engage the one way wheel jacks for climb
+
+        // System.out.println("Servo : " + lift.getClutchPos());
     }
 }
