@@ -1,6 +1,7 @@
 package frc.drive;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.*;
@@ -10,7 +11,7 @@ import frc.robot.RobotMap;
 
 public class DriveBase {
 
-    private final CANSparkMax leaderL, leaderR, SlaveL, SlaveR, SlaveL2, SlaveR2;
+    private final CANSparkMax leaderL, leaderR, slaveL, slaveR, slaveL2, slaveR2;
 
     private final Solenoid shiftUp, shiftDown;
     private final PigeonIMU gyro;
@@ -19,40 +20,56 @@ public class DriveBase {
     public DriveBase() {
         leaderL = new CANSparkMax(RobotMap.driveLeaderLeft, MotorType.kBrushless);
         leaderR = new CANSparkMax(RobotMap.driveLeaderRight, MotorType.kBrushless);
-        SlaveL = new CANSparkMax(RobotMap.driveSlaveLeftA, MotorType.kBrushless);
-        SlaveR = new CANSparkMax(RobotMap.driveSlaveRightA, MotorType.kBrushless);
-        SlaveL2 = new CANSparkMax(RobotMap.driveSlaveLeftB, MotorType.kBrushless);
-        SlaveR2 = new CANSparkMax(RobotMap.driveSlaveRightB, MotorType.kBrushless);
+        slaveL = new CANSparkMax(RobotMap.driveSlaveLeftA, MotorType.kBrushless);
+        slaveR = new CANSparkMax(RobotMap.driveSlaveRightA, MotorType.kBrushless);
+        slaveL2 = new CANSparkMax(RobotMap.driveSlaveLeftB, MotorType.kBrushless);
+        slaveR2 = new CANSparkMax(RobotMap.driveSlaveRightB, MotorType.kBrushless);
 
-        SlaveL.follow(leaderL);
-        SlaveL2.follow(leaderL);
-        SlaveR.follow(leaderR);
-        SlaveR2.follow(leaderR);
+        slaveL.follow(leaderL);
+        slaveL2.follow(leaderL);
+        slaveR.follow(leaderR);
+        slaveR2.follow(leaderR);
 
         shiftUp = new Solenoid(RobotMap.gearboxPistonA);
         shiftDown = new Solenoid(RobotMap.gearboxPistonB);
-        
-        // create CANEncoder objects from the leader and return WPI encoders in the get
-        // encoder methods by either
-        // making a new class that extends the CANEncoder by implementing the wpi
-        // Encoder
-        // OR reading and writing the values
 
         gyro = new PigeonIMU(RobotMap.CANGyro);
         gyroXYZ = new double[3];
-        // dont forget to init & rebias the gyro at startup
-
     }
 
     public void drive(double left, double right) {
         leaderL.set(-left);
         leaderR.set(right);
         // left is reversed
-   
+    }
+
+    public void setDriveCoast(){
+        leaderL.setIdleMode(IdleMode.kCoast);
+        slaveL.setIdleMode(IdleMode.kCoast);
+        slaveL2.setIdleMode(IdleMode.kCoast);
+        leaderR.setIdleMode(IdleMode.kCoast);
+        slaveR.setIdleMode(IdleMode.kCoast);
+        slaveR2.setIdleMode(IdleMode.kCoast);
+    }
+
+    public void setDriveBrake(){
+        leaderL.setIdleMode(IdleMode.kBrake);
+        slaveL.setIdleMode(IdleMode.kBrake);
+        slaveL2.setIdleMode(IdleMode.kBrake);
+        leaderR.setIdleMode(IdleMode.kBrake);
+        slaveR.setIdleMode(IdleMode.kBrake);
+        slaveR2.setIdleMode(IdleMode.kBrake);
+    }
+
+    public void setDriveCurrentMax(){
+        leaderL.setClosedLoopRampRate(2.25);
+        leaderR.setClosedLoopRampRate(2.25);
     }
 
     public void initGyro(){
-        //gyro.configTemperatureCompensationEnable(bTempCompEnable, timeoutMs)
+        // gyro.configTemperatureCompensationEnable(true, 0);
+        // how do you configure this thing @ startup? (rebias & etc.)
+        
     }
 
     public double[] getGyro() {
@@ -70,8 +87,8 @@ public class DriveBase {
     }
 
     public double getGyroRate(){
-        return getGyro()[0];
-        //0 is raw gyro rate on 'x' plane (yaw), which I think is what is turning
+        return getGyro()[2];
+        //get the rate from the gyro for robot turning
     }
 
     public double getEncoderLPos() {
@@ -81,7 +98,7 @@ public class DriveBase {
     public double getEncoderRPos() {
         return leaderR.getEncoder().getPosition();
     }
-    //no gear shifting on the practice bot
+    
     public void gearChange(boolean b) {
         shiftUp.set(b);
         shiftDown.set(!b);
