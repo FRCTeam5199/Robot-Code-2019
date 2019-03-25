@@ -11,12 +11,12 @@ public class GrabberControl implements LoopModule {
     private final JoystickController Joy;
     private final ButtonPanel panel;
 
-    private boolean hasHatch, claws;
+    public boolean hasHatch, claws;
     private boolean guideOn;
     private boolean pokersOut;
     private double lastTime, inspeed;
     private int lastButton;
-
+    
     public GrabberControl(Grabber grabber, JoystickController Joy, ButtonPanel panel) {
         this.grabber = grabber;
         this.Joy = Joy;
@@ -25,22 +25,17 @@ public class GrabberControl implements LoopModule {
 
     @Override
     public void init() {
-        grabber.setGrabber(true);
+        
         grabber.setIntake(0);
-        hasHatch = false;
+        inspeed = 0;
+        //hasHatch = true;
         pokersOut = false;
         claws = false;
         lastTime = System.currentTimeMillis();
         this.lastButton = -1;
-        inspeed = 0;
-        
+
         guideOn = false;
     }
-
-/*     private boolean groundPickupActive() {
-        return false;
-    }
-    //this should only be true for the hatch intake button */
 
     @Override
     public void update(long delta) {
@@ -48,14 +43,14 @@ public class GrabberControl implements LoopModule {
         // Cargo: Joystick
         if (Joy.hatUp()) {
             if(lastButton == 2){
-                inspeed = -.5;
+                inspeed = .5;
             }
             else{
-                inspeed = -1;
+                inspeed = 1;
             }
         } 
         else if (Joy.hatDown()) {
-            inspeed = 1;
+            inspeed = -1;
         } 
         else if (Joy.getHat() == -1){
             inspeed = 0;
@@ -67,24 +62,18 @@ public class GrabberControl implements LoopModule {
         else if (lastButton != 6){
             grabber.setIntake(inspeed);
         }
-        //debug v
-       /*  if(Joy.hatUp()){
-            grabber.setIntake(-1);
-        }
 
-        else if (Joy.hatDown()){
+        /* //Cargo Intake when in manual override
+        if(Joy.getButtonDown(5) || Joy.getButtonDown(6)){
             grabber.setIntake(1);
         }
-        else{
+        else if(Joy.getButtonDown(3) || Joy.getButtonDown(4)){
+            grabber.setIntake(-1);
+        }
+        else if(Joy.getButtonUp(5) || Joy.getButtonUp(6) || Joy.getButtonUp(3) || Joy.getButtonUp(4)){
             grabber.setIntake(0);
-        } */
-
-        //idek what this does v
-        /*
-         * if (Joy.getHat() != -1){ if (Joy.getHat() == 180){ grabber.setIntake(1); }
-         * else if (Joy.getHat() == 0){ grabber.setIntake(-1); } } else if (Joy.getHat()
-         * == -1){ grabber.setIntake(0); }
-         */
+        }
+        // */
 
         // Hatch: Trigger
         if(lastButton != 6){
@@ -104,28 +93,28 @@ public class GrabberControl implements LoopModule {
                 SmartDashboard.putBoolean("Hatch", hasHatch);
             }
 
-            else if (System.currentTimeMillis() > lastTime + 1000 && pokersOut) {
+            else if (System.currentTimeMillis() > lastTime + 300 && pokersOut) {
                 grabber.setGrabber(false);
                 grabber.setPokers(false);
                 pokersOut = false;
                 hasHatch = false;
                 lastTime = System.currentTimeMillis();
             }
-            else if (System.currentTimeMillis() > lastTime + 500 && pokersOut) {
+            else if (System.currentTimeMillis() > lastTime + 22 && pokersOut) {
                 grabber.setGrabber(false);
                 grabber.setPokers(true);
                 pokersOut = true;
             }
         }
-        else if (lastButton == 6){
+        /* else if (lastButton == 6){
             if (Joy.getButtonDown(1)) { claws = !claws; }
             grabber.setGrabber(claws);
-        }
+        } */
 
         
-        if(panel.getButtonDown(4)){ guideOn = !guideOn; }
+        /* if(panel.getButtonDown(n)){ guideOn = !guideOn; }
         grabber.setHatchGuide(guideOn);
-        //for the hatch guide testing^, needs to be setup with bools from 'lastbutton';
+        //for the hatch guide testing^, needs to be setup with bools from 'lastbutton'; */
 
     }
 }
