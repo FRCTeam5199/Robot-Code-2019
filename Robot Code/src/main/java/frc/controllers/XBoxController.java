@@ -5,14 +5,15 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 
 public class XBoxController {
 	private Joystick stick;
+	private double deadzone = 0.07;
 
 	public XBoxController(int n) {
 		stick = new Joystick(n);
 	}
 
 	public double getStickLX() {
-		if (Math.abs(stick.getRawAxis(0)) > .1){
-			return -stick.getRawAxis(0);
+		if (Math.abs(stick.getRawAxis(0)) > deadzone){
+			return stick.getRawAxis(0);
 		}
 		else{
 			return 0;
@@ -20,7 +21,7 @@ public class XBoxController {
 	}
 
 	public double getStickLY() {
-		if (Math.abs(stick.getRawAxis(1)) > .1){
+		if (Math.abs(stick.getRawAxis(1)) > deadzone){
 			return -stick.getRawAxis(1);
 		}
 		else{
@@ -29,8 +30,8 @@ public class XBoxController {
 	}
 
 	public double getStickRX() {
-		if (Math.abs(stick.getRawAxis(4)) > .1){
-			return -stick.getRawAxis(4);
+		if (Math.abs(stick.getRawAxis(4)) > deadzone){
+			return stick.getRawAxis(4);
 		}
 		else{
 			return 0;
@@ -38,7 +39,7 @@ public class XBoxController {
 	}
 
 	public double getStickRY() {
-		if (Math.abs(stick.getRawAxis(5)) > .1){
+		if (Math.abs(stick.getRawAxis(5)) > deadzone){
 			return -stick.getRawAxis(5);
 		}
 		else{
