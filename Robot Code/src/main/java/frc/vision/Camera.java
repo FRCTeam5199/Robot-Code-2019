@@ -6,24 +6,23 @@ import org.opencv.imgproc.Imgproc;
 import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.CvSource;
 import edu.wpi.cscore.UsbCamera;
+import edu.wpi.cscore.VideoSource;
 import edu.wpi.first.cameraserver.CameraServer;
 
 public class Camera implements Runnable {
 	private Thread thread;
 	private UsbCamera camera;
-	private UsbCamera camera2;
 
 	private boolean isAlive;
 
 	public Camera() {
-		this(640, 480);
+		// this(640, 480);
+		this(480, 360);
 	}
 
 	public Camera(int xRes, int yRes) {
 		camera = CameraServer.getInstance().startAutomaticCapture(0);
 		camera.setResolution(xRes, yRes);
-		camera2 = CameraServer.getInstance().startAutomaticCapture(1);
-		camera2.setResolution(xRes, yRes);
 
 		start();
 	}
@@ -32,7 +31,6 @@ public class Camera implements Runnable {
 		thread = new Thread(this, "Camera thread");
 		thread.start();
 		isAlive = true;
-		//you might need a second thread, it think cam2 is just overriding the instance rn
 	}
 
 	@Override
