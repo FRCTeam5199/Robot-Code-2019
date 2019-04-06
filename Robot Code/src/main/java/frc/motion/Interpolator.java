@@ -18,6 +18,13 @@ public class Interpolator{
         delta = end - this.start;
     }
 
+    public void init(double start, double end, long delay){
+        startTime = System.currentTimeMillis() + delay;
+        this.start = start;
+        this.end = end;
+        delta = end - start;
+    }
+
     public boolean isFinished(){
         return time() * k > Math.PI;
     }
