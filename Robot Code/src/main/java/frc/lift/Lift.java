@@ -1,7 +1,6 @@
 package frc.lift;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-import com.revrobotics.CANSparkMax.IdleMode;
 
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.RobotMap;
 import com.ctre.phoenix.motorcontrol.ControlMode;
