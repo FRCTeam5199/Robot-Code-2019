@@ -23,11 +23,9 @@ public class Armevator {
     private PIDController wristPID;
     private PIDController elePID;
 
-    //weight: 
+    //weight: ?
     // Empirical Stall Torque: 2.6 Nm
-    // Empirical Motor Kv: 473 Kv
-    // Empirical Stall Current: 105 A
-    // d to center of mass: 
+    // d to center of mass: ?
     // feed forward equation: Arm weight (from motor) * distance to arm cOm / Motor Stall Torque * Number of motors * gear ratio * cos(theta)
 
     //in units of degrees, degrees, inches
@@ -35,18 +33,10 @@ public class Armevator {
     private double ekP, ekI, ekD, ekFF, elkP, elkI, elkD, elkFF, wkP, wkI, wkD, wkFF;
 
     public Armevator(){
-        // these ratios are a little off
-        //old elbow ratio 7:1 *2 + 24:84 /360 v (in degrees)
-        // elbowRatio = 720/343;
-        //new elbow ratio 7:1 + 5:1 + 24:84 /360 v
+        // elbow ratio 7:1 + 5:1 + 24:84 /360 v
         // elbowRatio = 144/49;
-        //for some reason the fraction does not work wtf!?
         elbowRatio = 2.9387755102040816326530612244898;
         wristRatio = 120/49;
-
-        //                    |
-        // this shit is wrong v
-        //eleRatio = 0.378371;
         //units still arent exactly in inches, what is wrong with ratio?:
         eleRatio = ((1/14.5384615) * 1.751) * Math.PI;
         //1:7 -> 26:54
@@ -59,11 +49,8 @@ public class Armevator {
         eleMotor = new SparkMaxPID(RobotMap.eleMotor, MotorType.kBrushless);
 
         elbowPID = new PIDController(0.1,0.0000005,0.156,-.01355871, elbowMotor, elbowMotor);
-        // ff: 1% of 1.55697115 (w/ mod: .01355871)
         wristPID = new PIDController(0.1,0,0, wristMotor, wristMotor);
-        //elePID = new PIDController(0.125,0.00000001,0.15,0.0125, eleMotor, eleMotor);
         elePID = new PIDController(0.125,0.00000001,0.12,0.0125, eleMotor, eleMotor);
-        //tiny oscillations at ends of min to max,interpolator needs a maxV
 
     }
 
@@ -82,7 +69,6 @@ public class Armevator {
 		SmartDashboard.putNumber("Wrist I", wkI);
         SmartDashboard.putNumber("Wrist D", wkD);
         SmartDashboard.putNumber("Wrist FF", wkFF);
-        // add the rest
         
     }
     
