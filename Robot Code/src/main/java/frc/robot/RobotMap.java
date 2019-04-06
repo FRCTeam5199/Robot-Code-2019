@@ -33,7 +33,7 @@ public class RobotMap {
 	//there are no limit switches on the arm
 
 
-	//Control Panel buttons
+	//Control Panel buttons (needs the rest, could use better names)
 	public static final int climberUp = 1;
 	public static final int climberDown = 2;
 	public static final int climberFWD = 3;
