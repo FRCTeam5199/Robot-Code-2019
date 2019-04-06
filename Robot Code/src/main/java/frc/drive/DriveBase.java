@@ -5,9 +5,12 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.*;
+import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Solenoid;
 import frc.robot.RobotMap;
+import frc.vision.Limelight;
+import frc.vision.Limelight.LedMode;
 
 public class DriveBase {
 
@@ -16,6 +19,9 @@ public class DriveBase {
     private final Solenoid shiftUp, shiftDown;
     private final PigeonIMU gyro;
     private double[] gyroXYZ;
+    private PIDController aimPID;
+    private Limelight limey;
+    private AimPIDOutput aimbot;
 
     public DriveBase() {
         leaderL = new CANSparkMax(RobotMap.driveLeaderLeft, MotorType.kBrushless);
@@ -35,12 +41,23 @@ public class DriveBase {
 
         gyro = new PigeonIMU(RobotMap.CANGyro);
         gyroXYZ = new double[3];
+
+        limey = new Limelight();
+        aimbot = new AimPIDOutput(this);
+
+        aimPID = new PIDController(0.009,0,0,limey, aimbot);
+        //oh lawd
+
     }
 
     public void drive(double left, double right) {
         leaderL.set(-left);
         leaderR.set(right);
         // left is reversed
+    }
+
+    public void driveArcade(double move, double turn){
+        drive(move-turn, move+turn);
     }
 
     public void setDriveCoast(){
@@ -65,6 +82,7 @@ public class DriveBase {
         leaderL.setClosedLoopRampRate(2.25);
         leaderR.setClosedLoopRampRate(2.25);
     }
+    //might get in the way of PID
 
     public void initGyro(){
         // gyro.configTemperatureCompensationEnable(true, 0);
@@ -104,4 +122,24 @@ public class DriveBase {
         shiftDown.set(!b);
     }
 
+    public void enableAimPID(){
+        aimPID.enable();
+    }
+    
+    public void disableAimPID(){
+        aimPID.disable();
+    }
+
+    public void driveAim(double move){
+        aimbot.setMove(move);
+    }
+
+    public void aimLightsOn(){
+        limey.setLEDMode(LedMode.ON);
+    }
+
+    public void aimLightsOff(){
+        limey.setLEDMode(LedMode.OFF);
+    }
+ 
 }
