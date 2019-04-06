@@ -8,7 +8,6 @@ import edu.wpi.cscore.CvSource;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.VideoSource;
 import edu.wpi.first.cameraserver.CameraServer;
-
 public class Camera implements Runnable {
 	private Thread thread;
 	private UsbCamera camera;
@@ -16,8 +15,7 @@ public class Camera implements Runnable {
 	private boolean isAlive;
 
 	public Camera() {
-		// this(640, 480);
-		this(480, 360);
+		this(640, 480);
 	}
 
 	public Camera(int xRes, int yRes) {
