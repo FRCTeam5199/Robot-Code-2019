@@ -16,9 +16,7 @@ public class ArmevatorControl implements LoopModule {
 
     private double eleTarget = 0;
     private double eleMotorPos;
-    // eleTop : -31.053, loss @ bottom: 0.622-0.854
-    // The max height of the elevator is in arbitrary units rn, something is wrong
-    // with the eleRatio math or the gearing
+    // The max height of the elevator is in arbitrary units
     private double eleMaxHeight = -32.5;
     //comp bot ele height ^
     // private double eleMaxHeight = -20.5;
@@ -57,7 +55,7 @@ public class ArmevatorControl implements LoopModule {
     @Override
     public void init() {
         arm.setArmBreak();
-        //arm.setArmCoast();
+        // arm.setArmCoast();
         arm.setArmCurrentMax();
         hatMod = 0;
         elbowAngle = arm.getElbowPosition();
@@ -94,7 +92,6 @@ public class ArmevatorControl implements LoopModule {
     private void eleInterpolator(double d) {
         eleInterpolator.init(arm.getElePosition(), d);
     }
-    // combine these later ^
 
     private double angleIncrementer(double j) {
         if (System.currentTimeMillis() > lastTime + 10) {
@@ -153,7 +150,7 @@ public class ArmevatorControl implements LoopModule {
 
     @Override
     public void update(long delta) {
-        findArmPositions();
+        // findArmPositions();
 
         /* //manual arm movement
         if(Math.abs(Joy.getYAxis()) > 0 || Joy.getHat() != -1){
@@ -205,7 +202,7 @@ public class ArmevatorControl implements LoopModule {
             moveArmTo(ArmConstants.cargoIntake[0], ArmConstants.cargoIntake[1]);
             panel.lastButton = 5;
         }
-        // ^float/cargo intake pos, ~1 in off the ground with a bit of a wrist tilt down
+        // ^cargo intake pos
         if (panel.getButton(6)) {
             if (elpos != 0) {
                 moveEleTo(0);
@@ -213,7 +210,7 @@ public class ArmevatorControl implements LoopModule {
             moveArmTo(ArmConstants.hatchIntake[0], ArmConstants.hatchIntake[1]);
             panel.lastButton = 6;
         }
-        // ^ the hatch intake position, we arent doing ground pickup so same as hatch1
+        // ^ the hatch intake position, we arent doing ground pickup anymore so same as hatch1
         if (panel.getButton(3)) {
             if (elpos != 0) {
                 moveEleTo(0);
