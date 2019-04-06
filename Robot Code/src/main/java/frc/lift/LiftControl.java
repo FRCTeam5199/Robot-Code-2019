@@ -4,23 +4,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.controllers.ButtonPanel;
 import frc.controllers.JoystickController;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-
-import java.awt.Button;
-
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.revrobotics.ControlType;
-import frc.robot.RobotMap;
 import frc.lift.Lift;
 import frc.interfaces.LoopModule;
 
 public class LiftControl implements LoopModule{
     private final Lift lift;
     private final ButtonPanel panel;
-    private boolean winchUpButton = false;
-    private boolean winchDownButton = false;
-    private boolean liftDriveFWD = false;
-    private boolean liftDriveBWD = false;
-    private boolean LocksOn, toggle;
+    private boolean LocksOn;
 
     public LiftControl(Lift lift, ButtonPanel panel){
         this.lift = lift;
@@ -28,7 +18,6 @@ public class LiftControl implements LoopModule{
     }
 
     public void init(){
-        toggle = false;
         LocksOn = false;
         lift.setClutch(0);
     }
