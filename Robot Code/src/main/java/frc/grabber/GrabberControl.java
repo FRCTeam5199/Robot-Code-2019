@@ -28,7 +28,6 @@ public class GrabberControl implements LoopModule {
         
         grabber.setIntake(0);
         inspeed = 0;
-        //hasHatch = true;
         pokersOut = false;
         claws = false;
         lastTime = System.currentTimeMillis();
@@ -42,7 +41,7 @@ public class GrabberControl implements LoopModule {
         this.lastButton = panel.lastButton;
         // Cargo: Joystick
         if (Joy.hatUp()) {
-            if(lastButton == 2){
+            if(lastButton == 4){
                 inspeed = .5;
             }
             else{
@@ -92,7 +91,7 @@ public class GrabberControl implements LoopModule {
 
                 SmartDashboard.putBoolean("Hatch", hasHatch);
             }
-
+            //change this value for new hatch claws
             else if (System.currentTimeMillis() > lastTime + 300 && pokersOut) {
                 grabber.setGrabber(false);
                 grabber.setPokers(false);
@@ -100,6 +99,7 @@ public class GrabberControl implements LoopModule {
                 hasHatch = false;
                 lastTime = System.currentTimeMillis();
             }
+            //change this value for new hatch claws
             else if (System.currentTimeMillis() > lastTime + 22 && pokersOut) {
                 grabber.setGrabber(false);
                 grabber.setPokers(true);
@@ -110,6 +110,7 @@ public class GrabberControl implements LoopModule {
             if (Joy.getButtonDown(1)) { claws = !claws; }
             grabber.setGrabber(claws);
         } */
+        //for hatch ground pickup
 
         
         /* if(panel.getButtonDown(n)){ guideOn = !guideOn; }
