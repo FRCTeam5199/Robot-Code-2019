@@ -5,9 +5,6 @@ import frc.robot.RobotMap;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-//
-import edu.wpi.first.wpilibj.Servo;
-//
 
 public class Grabber {
 
@@ -15,10 +12,6 @@ public class Grabber {
     private Solenoid gripperPiston;
     private Solenoid pokePistons;
     // private Solenoid hatchGuidePiston;
-
-    //
-    private Servo clutch;
-    //
 
     public Grabber() {
         gripperPiston = new Solenoid(RobotMap.gripperPiston);
