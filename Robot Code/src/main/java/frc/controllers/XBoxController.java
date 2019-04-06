@@ -59,6 +59,14 @@ public class XBoxController {
 		return stick.getRawButton(n);
 	}
 
+	public boolean getButtonDown(int n){
+		return stick.getRawButtonPressed(n);
+	}
+
+	public boolean getButtonUp(int n){
+		return stick.getRawButtonReleased(n);
+	}
+
 	public void setLRumble(double n) {
 		stick.setRumble(RumbleType.kLeftRumble, n);
 	}
