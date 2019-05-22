@@ -126,9 +126,9 @@ public class Robot extends TimedRobot {
         BigLoop bigLoop = new BigLoop(cl);
 
         // bigLoop.add(liftControl);
-        // bigLoop.add(driveControl);
+        bigLoop.add(driveControl);
         // bigLoop.add(armControl);
-        bigLoop.add(grabberControl);
+        // bigLoop.add(grabberControl);
         bigLoop.init();
         
         while (isEnabled() && isTest()) {
