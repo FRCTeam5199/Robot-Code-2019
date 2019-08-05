@@ -75,7 +75,7 @@ public class GrabberControl implements LoopModule {
         // */
 
         // Hatch: Trigger
-        if(lastButton != 6){
+        if(true){
             if (Joy.getButtonDown(1)) {
 
                 if (!hasHatch) {

@@ -14,7 +14,7 @@ public class DriveControl implements LoopModule{
     private final XBoxController controller;
     //comp bot
     private final double rSpeed = 45;
-    private final double kSpeed = .66;
+    private final double kSpeed = .8; //changed from .66 on 8/4
     //practice bot w/ dead motors
     /* private final double rSpeed = 70;
     private final double kSpeed = .9; */

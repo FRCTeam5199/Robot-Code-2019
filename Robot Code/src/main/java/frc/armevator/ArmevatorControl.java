@@ -187,7 +187,7 @@ public class ArmevatorControl implements LoopModule {
         
         //**** try to move arms out after it exits the startup position */
         
-        if (panel.getButton(9)) {
+        if (panel.getButton(9)) { //HATCH PORTAL/LEVEL 1 BUTTON
             if (elpos != 0) {
                 moveEleTo(0);
             }
@@ -203,7 +203,7 @@ public class ArmevatorControl implements LoopModule {
             panel.lastButton = 5;
         }
         // ^cargo intake pos
-        if (panel.getButton(6)) {
+        if (panel.getButton(6)) { //HATCH INTAKE BUTTON
             if (elpos != 0) {
                 moveEleTo(0);
             }
@@ -270,12 +270,22 @@ public class ArmevatorControl implements LoopModule {
             panel.lastButton = 14;
 
         }
+//       | v |   CONOR BRAKING JUNK   | v |
+        if(Joy.getButtonDown(7)){
+            arm.setArmCoast();
+        }
+        if(Joy.getButtonDown(8)){
+            arm.setArmBreak();
+        }
+//       | ^ | END CONOR BRAKING JUNK | ^ |
+
+
         // "drive" position/ stowed ^
 
-        /* if(Joy.getButton(9)){
+        if(Joy.getButton(9)){
             System.out.println("Elbow Pos: " + elbowAngle);
             System.out.println("Wrist Pos: " + wristAngle);
-        } */
+        }
         //print current angles
     }
 }
