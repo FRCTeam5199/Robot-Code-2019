@@ -82,6 +82,16 @@ public class DriveBase {
         leaderL.setClosedLoopRampRate(2.25);
         leaderR.setClosedLoopRampRate(2.25);
     }
+
+    public void setCurrentLimits(int stallAmps, int freeAmps, int freeRpmMin){
+        leaderL.setSmartCurrentLimit(stallAmps, freeAmps, freeRpmMin);
+        leaderR.setSmartCurrentLimit(stallAmps, freeAmps, freeRpmMin);
+        slaveL.setSmartCurrentLimit(stallAmps, freeAmps, freeRpmMin);
+        slaveR.setSmartCurrentLimit(stallAmps, freeAmps, freeRpmMin);
+        slaveL2.setSmartCurrentLimit(stallAmps, freeAmps, freeRpmMin);
+        slaveR2.setSmartCurrentLimit(stallAmps, freeAmps, freeRpmMin);
+
+    }
     //might get in the way of PID
 
     public void initGyro(){

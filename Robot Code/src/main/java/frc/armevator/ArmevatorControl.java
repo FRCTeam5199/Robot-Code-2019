@@ -270,6 +270,16 @@ public class ArmevatorControl implements LoopModule {
             panel.lastButton = 14;
 
         }
+        // "drive" position/ stowed ^
+/*
+        if (Joy.getButton(7)) { 
+            moveArmTo(ArmConstants.oow[0], ArmConstants.oow[1]);
+        }
+
+        // fish out of water^
+        //SPECIAL POSITION FOR HATCH IN PRACTICE MODE, UNCOMMENT IF NEEDED
+        */
+/*
 //       | v |   CONOR BRAKING JUNK   | v |
         if(Joy.getButtonDown(7)){
             arm.setArmCoast();
@@ -278,9 +288,9 @@ public class ArmevatorControl implements LoopModule {
             arm.setArmBreak();
         }
 //       | ^ | END CONOR BRAKING JUNK | ^ |
+*/
 
 
-        // "drive" position/ stowed ^
 
         if(Joy.getButton(9)){
             System.out.println("Elbow Pos: " + elbowAngle);
