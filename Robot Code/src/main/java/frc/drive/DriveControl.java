@@ -18,8 +18,11 @@ public class DriveControl implements LoopModule{
     //practice bot w/ dead motors
     /* private final double rSpeed = 70;
     private final double kSpeed = .9; */
+    
 
     private double speed;
+    public double targetSpeedAuton;
+    public double accelFactor = .1;
     private static boolean jesusHasWheel;
 
     public DriveControl(DriveBase base, XBoxController controller) {
@@ -39,7 +42,7 @@ public class DriveControl implements LoopModule{
 
     }
 
-    public void tankControl() {
+    public void tankControl() { 
 		double speedMultiplier = speed;
 		double right = controller.getStickRY();
 		double left = controller.getStickLY();
@@ -106,6 +109,14 @@ public class DriveControl implements LoopModule{
         SmartDashboard.putNumber("Encoder R: ", base.getEncoderRPos());
     }
 
+    public void printMotorTempAvg(){
+        SmartDashboard.putNumber("Avg Temp: ", base.getMotorTempAvg());
+    }
+
+    public void printMotorTempMax(){
+        SmartDashboard.putNumber("Max Temp: ", base.getMotorTempMax());
+    }
+
     public DriveBase getBase() {
         return base;
     }
@@ -113,6 +124,10 @@ public class DriveControl implements LoopModule{
     @Override
     public void update(long delta){
         printEncoderPos();
+        printMotorTempAvg();
+        printMotorTempMax();
+        SmartDashboard.putNumber("Avg FPS",base.getFpsAvg());
+        SmartDashboard.putNumber("Avg RPM",base.getRpmsAvg());
         //base.printGyroVals();
         // printSticks(); 
 
@@ -141,4 +156,10 @@ public class DriveControl implements LoopModule{
         }
     }
 
+
+    //auton junk
+    public void driveAutonFeet(double driveDistance, double speedTarget){
+        
+    }
+    
 }

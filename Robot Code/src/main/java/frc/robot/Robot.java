@@ -103,6 +103,7 @@ public class Robot extends TimedRobot {
         grabber.setGrabber(true);
         grabberControl.hasHatch = true;
         armControl.exitStow();
+        base.gearChange(false);
     }
     //init 1 time inits from here, iterative robot shouldn't be set up like this to avoid loop overruns, just making do
 

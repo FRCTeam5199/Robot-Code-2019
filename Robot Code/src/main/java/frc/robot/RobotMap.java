@@ -13,7 +13,7 @@ public class RobotMap {
 	//CAN bus device ID's
 	public static final int wristMotor = 5;
 	public static final int eleMotor = 3;
-	public static final int elbowMotor = 4;
+	public static final int elbowMotor = 4; //using this guy for testing drivetrain motors through spark max client
 	public static final int driveLeaderRight = 2;
 	public static final int driveLeaderLeft = 1;
 	public static final int	driveSlaveRightA = 6;

@@ -12,6 +12,9 @@ import frc.robot.RobotMap;
 import frc.vision.Limelight;
 import frc.vision.Limelight.LedMode;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 public class DriveBase {
 
     private final CANSparkMax leaderL, leaderR, slaveL, slaveR, slaveL2, slaveR2;
@@ -22,6 +25,8 @@ public class DriveBase {
     private PIDController aimPID;
     private Limelight limey;
     private AimPIDOutput aimbot;
+
+    
 
     public DriveBase() {
         leaderL = new CANSparkMax(RobotMap.driveLeaderLeft, MotorType.kBrushless);
@@ -119,6 +124,20 @@ public class DriveBase {
         //get the rate from the gyro for robot turning
     }
 
+    public double[] motorTemps(){
+        double[] temps = {leaderL.getMotorTemperature(), slaveL.getMotorTemperature(), slaveL2.getMotorTemperature(), leaderR.getMotorTemperature(), slaveR.getMotorTemperature(), slaveR2.getMotorTemperature()};
+        return temps;
+    }
+
+    public double getMotorTempAvg(){
+        return slaveL.getMotorTemperature()*slaveL2.getMotorTemperature()*leaderL.getMotorTemperature()*leaderR.getMotorTemperature()*slaveR.getMotorTemperature()*slaveR2.getMotorTemperature()/6;
+        //return avgTemp;
+    }
+
+    public double getMotorTempMax(){
+          return Arrays.stream(motorTemps()).max().getAsDouble();
+    }
+
     public double getEncoderLPos() {
         return leaderL.getEncoder().getPosition();
     }
@@ -130,6 +149,18 @@ public class DriveBase {
     public void gearChange(boolean b) {
         shiftUp.set(b);
         shiftDown.set(!b);
+        if(b){
+            leaderL.getEncoder().setVelocityConversionFactor(9.07/1);
+            leaderR.getEncoder().setVelocityConversionFactor(9.07/1);
+            leaderL.getEncoder().setPositionConversionFactor(((9.07/1)/(6*Math.PI/60))/12);
+            leaderR.getEncoder().setPositionConversionFactor(((9.07/1)/(6*Math.PI/60))/12);
+        }
+        else{
+            leaderL.getEncoder().setVelocityConversionFactor(33.33/1);
+            leaderR.getEncoder().setVelocityConversionFactor(33.33/1);
+            leaderL.getEncoder().setPositionConversionFactor(((33.33/1)/(6*Math.PI/60))/12);
+            leaderR.getEncoder().setPositionConversionFactor(((33.33/1)/(6*Math.PI/60))/12);
+        }
     }
 
     public void enableAimPID(){
@@ -151,5 +182,25 @@ public class DriveBase {
     public void aimLightsOff(){
         limey.setLEDMode(LedMode.OFF);
     }
- 
+
+    //auton code down here
+
+    public double getRpmsLeft(){
+        return leaderL.getEncoder().getVelocity();
+    }
+    public double getRpmsRight(){
+        return leaderR.getEncoder().getVelocity();
+    }
+    public double getRpmsAvg(){
+        return (getRpmsLeft()+getRpmsRight())/2;
+    }
+    public double getFpsLeft(){
+        return (leaderL.getEncoder().getVelocity()/(6*Math.PI/60))/12;
+    }
+    public double getFpsRight(){
+        return (leaderR.getEncoder().getVelocity()/(6*Math.PI/60))/12;
+    }
+    public double getFpsAvg(){
+        return (getFpsLeft()+getFpsRight())/2;
+    }
 }
