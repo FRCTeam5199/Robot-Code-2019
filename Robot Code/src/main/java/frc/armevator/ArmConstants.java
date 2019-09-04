@@ -7,7 +7,7 @@ public class ArmConstants{
     // public static final double b = 5;
     //practice bot
     public static final double b = 3.5;
-    public static final double hatchOffset = 2; // part :b:roke and red line wouldn't align nicely anymore
+    public static final double hatchOffset = 0; // part :b:roke and red line wouldn't align nicely anymore
     //elbow pos, wrist pos
     //public static final double[] cargoIntake = {53.81612660933514 + a,-117.00028228759766 + b}; OLD VALUES BEFORE CONOR SCREWED WITH IT
     public static final double[] cargoIntake = {52.81612660933514 + a,-113.52286529541016 + b}; //43 worked well //-113 before change to -116 at camarillo

@@ -130,7 +130,7 @@ public class DriveBase {
     }
 
     public double getMotorTempAvg(){
-        return slaveL.getMotorTemperature()*slaveL2.getMotorTemperature()*leaderL.getMotorTemperature()*leaderR.getMotorTemperature()*slaveR.getMotorTemperature()*slaveR2.getMotorTemperature()/6;
+        return (slaveL.getMotorTemperature()*slaveL2.getMotorTemperature()*leaderL.getMotorTemperature()*leaderR.getMotorTemperature()*slaveR.getMotorTemperature()*slaveR2.getMotorTemperature())/6;
         //return avgTemp;
     }
 
