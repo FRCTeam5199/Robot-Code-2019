@@ -8,6 +8,7 @@ import com.ctre.phoenix.sensors.*;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.RobotMap;
 import frc.vision.Limelight;
 import frc.vision.Limelight.LedMode;
@@ -15,7 +16,16 @@ import frc.vision.Limelight.LedMode;
 import java.util.Arrays;
 import java.util.Collections;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+
+import edu.wpi.first.wpilibj.shuffleboard.*;
+
 public class DriveBase {
+    private ShuffleboardTab tab = Shuffleboard.getTab("Debug");
+    private NetworkTableEntry useNeos =tab.addPersistent("Use Neo Encoders?", true).getEntry();
+    private NetworkTableEntry rampRate = tab.addPersistent("Ramp Rate", 0.01).getEntry();
 
     private final CANSparkMax leaderL, leaderR, slaveL, slaveR, slaveL2, slaveR2;
 
@@ -26,6 +36,7 @@ public class DriveBase {
     private Limelight limey;
     private AimPIDOutput aimbot;
 
+    //private double rampSpeed;
     
 
     public DriveBase() {
@@ -59,6 +70,16 @@ public class DriveBase {
         leaderL.set(-left);
         leaderR.set(right);
         // left is reversed
+    }
+
+    public void driveMotorRamp(CANSparkMax motor, double targetSpeed){ //targetSpeed is measured in output shaft RPMs, be sure to multiply joystick 
+        double rampRateDouble = rampRate.getDouble(0.01);
+        if(getRpms(motor)<targetSpeed){
+            setVelocity(motor,getRpms(motor)+rampRateDouble);
+        }
+        else if(getRpms(motor)>targetSpeed){
+            setVelocity(motor,getRpms(motor)-rampRateDouble);
+        }
     }
 
     public void driveArcade(double move, double turn){
@@ -149,17 +170,20 @@ public class DriveBase {
     public void gearChange(boolean b) {
         shiftUp.set(b);
         shiftDown.set(!b);
-        if(b){
-            leaderL.getEncoder().setVelocityConversionFactor(9.07/1);
-            leaderR.getEncoder().setVelocityConversionFactor(9.07/1);
-            leaderL.getEncoder().setPositionConversionFactor(((9.07/1)/(6*Math.PI/60))/12);
-            leaderR.getEncoder().setPositionConversionFactor(((9.07/1)/(6*Math.PI/60))/12);
-        }
-        else{
-            leaderL.getEncoder().setVelocityConversionFactor(33.33/1);
-            leaderR.getEncoder().setVelocityConversionFactor(33.33/1);
-            leaderL.getEncoder().setPositionConversionFactor(((33.33/1)/(6*Math.PI/60))/12);
-            leaderR.getEncoder().setPositionConversionFactor(((33.33/1)/(6*Math.PI/60))/12);
+        //bunch of junk for using NEO encoders if necessary
+        if(useNeos.getBoolean(true)){
+            if(b){
+                leaderL.getEncoder().setVelocityConversionFactor(1/9.07);
+                leaderR.getEncoder().setVelocityConversionFactor(1/9.07);
+                leaderL.getEncoder().setPositionConversionFactor(((1/9.07)/(6*Math.PI))/12);
+                leaderR.getEncoder().setPositionConversionFactor(((1/9.07)/(6*Math.PI))/12);
+            }
+            else{
+                leaderL.getEncoder().setVelocityConversionFactor(1/33.33);
+                leaderR.getEncoder().setVelocityConversionFactor(1/33.33);
+                leaderL.getEncoder().setPositionConversionFactor(((1/33.33)/(6*Math.PI))/12);
+                leaderR.getEncoder().setPositionConversionFactor(((1/33.33)/(6*Math.PI))/12);
+            }
         }
     }
 
@@ -184,12 +208,23 @@ public class DriveBase {
     }
 
     //auton code down here
+    private void setVelocity(CANSparkMax motor, double Velocity){
+        motor.set(Velocity/(5676*motor.getEncoder().getVelocityConversionFactor())); //convert desired speed to the -1 thru 1 scale
+    }
+
+    private double convertVelocityToSpeed(double Velocity){ //may need this idk
+        return (Velocity/(5676*leaderL.getEncoder().getVelocityConversionFactor())); 
+    }
+
 
     public double getRpmsLeft(){
         return leaderL.getEncoder().getVelocity();
     }
     public double getRpmsRight(){
         return leaderR.getEncoder().getVelocity();
+    }
+    private double getRpms(CANSparkMax motor){
+        return motor.getEncoder().getVelocity();
     }
     public double getRpmsAvg(){
         return (getRpmsLeft()+getRpmsRight())/2;
@@ -202,5 +237,9 @@ public class DriveBase {
     }
     public double getFpsAvg(){
         return (getFpsLeft()+getFpsRight())/2;
+    }
+
+    private double getMotorShaftSpeed(CANSparkMax motor){
+        return ((motor.getEncoder().getVelocity())*9.07);
     }
 }

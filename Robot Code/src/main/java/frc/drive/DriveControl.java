@@ -8,6 +8,10 @@ import frc.controllers.XBoxController;
 import frc.interfaces.LoopModule;
 import edu.wpi.first.wpilibj.RobotDrive;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+
 public class DriveControl implements LoopModule{
 
     private final DriveBase base;
@@ -89,6 +93,10 @@ public class DriveControl implements LoopModule{
         base.drive((controller.getStickLY()*(speed)) + turnSpeed, (controller.getStickLY()*(speed)) - turnSpeed);
 
     }
+
+    /*public void driveMotorRamp(){
+        
+    }*/
     
     public void arcadeControlAssisted() {
 		double targetSpeed = controller.getStickRX() * rSpeed;
