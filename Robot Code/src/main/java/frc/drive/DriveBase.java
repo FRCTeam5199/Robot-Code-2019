@@ -212,8 +212,12 @@ public class DriveBase {
         motor.set(Velocity/(5676*motor.getEncoder().getVelocityConversionFactor())); //convert desired speed to the -1 thru 1 scale
     }
 
-    private double convertVelocityToSpeed(double Velocity){ //may need this idk
+    public double convertVelocityToSpeed(double Velocity){ //may need this idk
         return (Velocity/(5676*leaderL.getEncoder().getVelocityConversionFactor())); 
+    }
+
+    public double convertSpeedToVelocity(double Speed){
+        return ((5676*leaderL.getEncoder().getVelocityConversionFactor())/Speed);
     }
 
 

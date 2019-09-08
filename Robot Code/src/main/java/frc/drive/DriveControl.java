@@ -140,6 +140,8 @@ public class DriveControl implements LoopModule{
         SmartDashboard.putNumber("LeaderL", base.motorTemps()[0]);
         SmartDashboard.putNumber("SlaveL", base.motorTemps()[1]);
         SmartDashboard.putNumber("SlaveL2", base.motorTemps()[2]);
+
+        SmartDashboard.putNumber("Speed",base.convertVelocityToSpeed(base.getRpmsLeft()));
         //base.printGyroVals();
         // printSticks(); 
 
