@@ -13,9 +13,11 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class DriveControl implements LoopModule{
+    
 
     private final DriveBase base;
     private final XBoxController controller;
+    
     //comp bot
     private final double rSpeed = 45;
     private final double kSpeed = .8; //changed from .66 on 8/4
@@ -26,7 +28,7 @@ public class DriveControl implements LoopModule{
 
     private double speed;
     public double targetSpeedAuton;
-    public double accelFactor = .1;
+    //public double accelFactor = .1;
     private static boolean jesusHasWheel;
 
     public DriveControl(DriveBase base, XBoxController controller) {

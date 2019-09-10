@@ -23,9 +23,13 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.shuffleboard.*;
 
 public class DriveBase {
-    private ShuffleboardTab tab = Shuffleboard.getTab("Debug");
-    private NetworkTableEntry useNeos =tab.addPersistent("Use Neo Encoders?", true).getEntry();
-    private NetworkTableEntry rampRate = tab.addPersistent("Ramp Rate", 0.01).getEntry();
+    public ShuffleboardTab debugTab = Shuffleboard.getTab("Debug");
+    private ShuffleboardTab positioningTab = Shuffleboard.getTab("Positioning");
+    private NetworkTableEntry useNeos =debugTab.addPersistent("Use Neo Encoders?", true).getEntry();
+    private NetworkTableEntry rampRate = debugTab.addPersistent("Ramp Rate", 0.01).getEntry();
+    private NetworkTableEntry useRamp = debugTab.addPersistent("Ramp Toggle", false).getEntry();
+    
+     //enable or disable the ramping feature
 
     private final CANSparkMax leaderL, leaderR, slaveL, slaveR, slaveL2, slaveR2;
 
@@ -67,19 +71,35 @@ public class DriveBase {
     }
 
     public void drive(double left, double right) {
+        boolean useRampBool = useRamp.getBoolean(false);
+        if(useRampBool==true){
+            driveRamp(left, right);
+        }
+        else{
         leaderL.set(-left);
         leaderR.set(right);
+        }
         // left is reversed
     }
 
+    public void driveRamp(double left, double right){
+        driveMotorRamp(leaderL, -left);
+        driveMotorRamp(leaderR, right);
+    }
+
     public void driveMotorRamp(CANSparkMax motor, double targetSpeed){ //targetSpeed is measured in output shaft RPMs, be sure to multiply joystick 
-        double rampRateDouble = rampRate.getDouble(0.01);
+        double rampRateDouble = rampRate.getDouble(0.01); // rpm/min^2?
         if(getRpms(motor)<targetSpeed){
             setVelocity(motor,getRpms(motor)+rampRateDouble);
         }
         else if(getRpms(motor)>targetSpeed){
             setVelocity(motor,getRpms(motor)-rampRateDouble);
         }
+    }
+
+    public void addMotorPositions(){
+        Shuffleboard.getTab("Positioning").add("L",leaderL.getEncoder().getPosition());
+        Shuffleboard.getTab("Positioning").add("R",leaderR.getEncoder().getPosition());
     }
 
     public void driveArcade(double move, double turn){
@@ -116,7 +136,6 @@ public class DriveBase {
         slaveR.setSmartCurrentLimit(stallAmps, freeAmps, freeRpmMin);
         slaveL2.setSmartCurrentLimit(stallAmps, freeAmps, freeRpmMin);
         slaveR2.setSmartCurrentLimit(stallAmps, freeAmps, freeRpmMin);
-
     }
     //might get in the way of PID
 
@@ -231,10 +250,10 @@ public class DriveBase {
         return motor.getEncoder().getVelocity();
     }
     public double getRpmsAvg(){
-        return (getRpmsLeft()+getRpmsRight())/2;
+        return ((-getRpmsLeft())+getRpmsRight())/2;
     }
     public double getFpsLeft(){
-        return (leaderL.getEncoder().getVelocity()/(6*Math.PI/60))/12;
+        return -(leaderL.getEncoder().getVelocity()/(6*Math.PI/60))/12;
     }
     public double getFpsRight(){
         return (leaderR.getEncoder().getVelocity()/(6*Math.PI/60))/12;
