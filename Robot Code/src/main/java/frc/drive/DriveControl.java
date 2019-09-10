@@ -178,4 +178,7 @@ public class DriveControl implements LoopModule{
         
     }
     
+    /*public boolean returnRTriggerState(){
+        return controller.getRTrigger()>0.05;
+    }*/
 }

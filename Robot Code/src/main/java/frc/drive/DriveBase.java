@@ -8,6 +8,7 @@ import com.ctre.phoenix.sensors.*;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.RobotMap;
 import frc.vision.Limelight;
@@ -28,10 +29,14 @@ public class DriveBase {
     private NetworkTableEntry useNeos =debugTab.addPersistent("Use Neo Encoders?", true).getEntry();
     private NetworkTableEntry rampRate = debugTab.addPersistent("Ramp Rate", 0.01).getEntry();
     private NetworkTableEntry useRamp = debugTab.addPersistent("Ramp Toggle", false).getEntry();
-    
+    private NetworkTableEntry rampTolerance = debugTab.addPersistent("Ramp Tolerance",0.05).getEntry();
+
+    private Timer accelTimekeep = new Timer();
      //enable or disable the ramping feature
 
     private final CANSparkMax leaderL, leaderR, slaveL, slaveR, slaveL2, slaveR2;
+
+    private double currentSpeed = 0;
 
     private final Solenoid shiftUp, shiftDown;
     private final PigeonIMU gyro;
@@ -67,7 +72,7 @@ public class DriveBase {
 
         aimPID = new PIDController(0.009,0,0,limey, aimbot);
         //oh lawd
-
+        
     }
 
     public void drive(double left, double right) {
@@ -87,16 +92,42 @@ public class DriveBase {
         driveMotorRamp(leaderR, right);
     }
 
-    public void driveMotorRamp(CANSparkMax motor, double targetSpeed){ //targetSpeed is measured in output shaft RPMs, be sure to multiply joystick 
-        double rampRateDouble = rampRate.getDouble(0.01); // rpm/min^2?
-        if(getRpms(motor)<targetSpeed){
-            setVelocity(motor,getRpms(motor)+rampRateDouble);
-        }
-        else if(getRpms(motor)>targetSpeed){
-            setVelocity(motor,getRpms(motor)-rampRateDouble);
-        }
+    public void setSpeedZero(){
+        currentSpeed = 0;
     }
 
+    public void driveMotorRamp(CANSparkMax motor, double targetSpeed){ //targetSpeed is measured in output shaft RPMs, be sure to multiply joystick 
+        double rampRateDouble = rampRate.getDouble(0.01)/60000; // rpm^2? remove 60k if it's not actually rpm^2 and input r/ms^2
+        double rampToleranceDouble = rampTolerance.getDouble(0.05); //wiggle room
+        double targetSpeedRpms = convertSpeedToVelocity(targetSpeed);
+        if(accelTimekeep.hasPeriodPassed(0.001)){
+            if(getRpms(motor)<targetSpeedRpms){
+                if(motor==leaderL){setVelocity(motor,getRpms(motor)+rampRateDouble);}
+                setVelocity(motor,getRpms(motor)+rampRateDouble);
+            }
+            else if(getRpms(motor)>targetSpeedRpms){
+                setVelocity(motor,getRpms(motor)-rampRateDouble);
+            }
+        }
+        //v2 code below
+        /*while(targetSpeed>currentSpeed+rampToleranceDouble){
+            currentSpeed+=rampRateDouble;
+        }
+        while(targetSpeed<currentSpeed-rampToleranceDouble){
+            currentSpeed-=rampRateDouble;
+        }
+        if(targetSpeed == 0){
+            currentSpeed=0;
+        }
+        if(motor==leaderL){motor.set(-currentSpeed);}
+        else{motor.set(currentSpeed);}*/ //end v2 code
+    } //sucks ^
+
+    /*public void rampSpeed(CANSparkMax motor, double targetSpeed){
+        double rampRateDouble = rampRate.getDouble(1);
+        
+    }*/
+    
     public void addMotorPositions(){
         Shuffleboard.getTab("Positioning").add("L",leaderL.getEncoder().getPosition());
         Shuffleboard.getTab("Positioning").add("R",leaderR.getEncoder().getPosition());

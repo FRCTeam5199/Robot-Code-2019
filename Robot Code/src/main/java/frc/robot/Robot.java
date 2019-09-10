@@ -64,7 +64,7 @@ public class Robot extends TimedRobot {
         limey = new Limelight();
 
         armControl = new ArmevatorControl(arm, Joy, panel);
-        grabberControl = new GrabberControl(grabber, Joy, panel);
+        grabberControl = new GrabberControl(grabber, Joy, panel,Xbox);
         liftControl = new LiftControl(lift, panel);
         driveControl = new DriveControl(base, Xbox);
 
@@ -115,6 +115,7 @@ public class Robot extends TimedRobot {
     @Override
     public void testInit(){
         arm.encoderReset();
+        base.setSpeedZero();
         // grabber.setGrabber(true);
         // grabberControl.hasHatch = true;
         // armControl.exitStow();

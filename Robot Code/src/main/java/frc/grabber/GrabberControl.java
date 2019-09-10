@@ -2,14 +2,27 @@ package frc.grabber;
 
 import frc.grabber.Grabber;
 import frc.interfaces.LoopModule;
+//import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.controllers.ButtonPanel;
 import frc.controllers.JoystickController;
+import frc.controllers.XBoxController;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+
+import edu.wpi.first.wpilibj.shuffleboard.*;
 
 public class GrabberControl implements LoopModule {
+    public ShuffleboardTab debugTab = Shuffleboard.getTab("Debug");
+    private NetworkTableEntry conorMode = debugTab.addPersistent("Driver Hatch Intake Control", false).getEntry();
+    private NetworkTableEntry cargoToggle = debugTab.addPersistent("Driver Cargo Intake Control", false).getEntry();
+    private NetworkTableEntry cargoTriggerSpitterToggle = debugTab.addPersistent("Driver Cargo Trigger Control", false).getEntry();
     private final Grabber grabber;
     private final JoystickController Joy;
     private final ButtonPanel panel;
+    private final XBoxController Xbox;
 
     public boolean hasHatch, claws;
     private boolean guideOn;
@@ -17,10 +30,11 @@ public class GrabberControl implements LoopModule {
     private double lastTime, inspeed;
     private int lastButton;
     
-    public GrabberControl(Grabber grabber, JoystickController Joy, ButtonPanel panel) {
+    public GrabberControl(Grabber grabber, JoystickController Joy, ButtonPanel panel, XBoxController Xbox) {
         this.grabber = grabber;
         this.Joy = Joy;
         this.panel = panel;
+        this.Xbox = Xbox;
     }
 
     @Override
@@ -40,15 +54,15 @@ public class GrabberControl implements LoopModule {
     public void update(long delta) {
         this.lastButton = panel.lastButton;
         // Cargo: Joystick
-        if (Joy.hatUp()) {
-            if(lastButton == 4){
+        if (Joy.hatUp()||(Xbox.getStickRY()>0.3&&cargoToggle.getBoolean(false))||(Xbox.getLTrigger()>0.1&&cargoTriggerSpitterToggle.getBoolean(false))) { //0.3 seems like a good number, have to intentionally push the stick a ways
+            if(lastButton == 4){ //longboye line ^
                 inspeed = .5;
             }
             else{
                 inspeed = 1;
             }
         } 
-        else if (Joy.hatDown()) {
+        else if (Joy.hatDown()||(Xbox.getStickRY()<-0.3&&cargoToggle.getBoolean(false))) { //flip the stick measurements if backwards
             inspeed = -1;
         } 
         else if (Joy.getHat() == -1){
@@ -75,8 +89,8 @@ public class GrabberControl implements LoopModule {
         // */
 
         // Hatch: Trigger
-        if(true){
-            if (Joy.getButtonDown(1)) {
+        if(true){ //yikes forget why i did this, something about intake position not letting us grab iirc
+            if (Joy.getButtonDown(1)||(Xbox.getRTrigger()>0.05&&conorMode.getBoolean(false))) { //added code to allow driver control of grabber as an experiment to see if i can push cycle time down/personal taste
 
                 if (!hasHatch) {
                     grabber.setGrabber(true);
