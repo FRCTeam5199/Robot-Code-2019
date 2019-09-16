@@ -97,7 +97,7 @@ public class DriveBase {
     }
 
     public void driveMotorRamp(CANSparkMax motor, double targetSpeed){ //targetSpeed is measured in output shaft RPMs, be sure to multiply joystick 
-        double rampRateDouble = rampRate.getDouble(0.01)/60000; // rpm^2? remove 60k if it's not actually rpm^2 and input r/ms^2
+        double rampRateDouble = rampRate.getDouble(0.01)/60000; //should be r/minute^2? remove 60k if it's not actually rpm^2 and input r/ms^2
         double rampToleranceDouble = rampTolerance.getDouble(0.05); //wiggle room
         double targetSpeedRpms = convertSpeedToVelocity(targetSpeed);
         if(accelTimekeep.hasPeriodPassed(0.001)){
@@ -127,7 +127,7 @@ public class DriveBase {
         double rampRateDouble = rampRate.getDouble(1);
         
     }*/
-    
+
     public void addMotorPositions(){
         Shuffleboard.getTab("Positioning").add("L",leaderL.getEncoder().getPosition());
         Shuffleboard.getTab("Positioning").add("R",leaderR.getEncoder().getPosition());
