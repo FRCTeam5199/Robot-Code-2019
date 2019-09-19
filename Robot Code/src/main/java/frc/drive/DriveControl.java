@@ -42,7 +42,7 @@ public class DriveControl implements LoopModule{
 
     public void init(){
         base.setDriveCoast();
-        base.setCurrentLimits(40, 60, 3);
+        base.setCurrentLimits(40,40,0);
         //base.setDriveBrake();
         //base.setDriveCurrentMax();
 

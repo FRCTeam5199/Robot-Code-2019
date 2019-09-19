@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj.shuffleboard.*;
 public class DriveBase {
     public ShuffleboardTab debugTab = Shuffleboard.getTab("Debug");
     private ShuffleboardTab positioningTab = Shuffleboard.getTab("Positioning");
+    private NetworkTableEntry encoderL = positioningTab.add("Position L", 0).getEntry();
     private NetworkTableEntry useNeos =debugTab.addPersistent("Use Neo Encoders?", true).getEntry();
     private NetworkTableEntry rampRate = debugTab.addPersistent("Ramp Rate", 0.01).getEntry();
     private NetworkTableEntry useRamp = debugTab.addPersistent("Ramp Toggle", false).getEntry();
