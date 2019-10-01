@@ -14,6 +14,8 @@ import frc.robot.RobotMap;
 import frc.vision.Limelight;
 import frc.vision.Limelight.LedMode;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -25,12 +27,15 @@ import edu.wpi.first.wpilibj.shuffleboard.*;
 
 public class DriveBase {
     public ShuffleboardTab debugTab = Shuffleboard.getTab("Debug");
+    public ShuffleboardTab motorTab = Shuffleboard.getTab("motors");
     private ShuffleboardTab positioningTab = Shuffleboard.getTab("Positioning");
     private NetworkTableEntry encoderL = positioningTab.add("Position L", 0).getEntry();
     private NetworkTableEntry useNeos =debugTab.addPersistent("Use Neo Encoders?", true).getEntry();
     private NetworkTableEntry rampRate = debugTab.addPersistent("Ramp Rate", 0.01).getEntry();
     private NetworkTableEntry useRamp = debugTab.addPersistent("Ramp Toggle", false).getEntry();
     private NetworkTableEntry rampTolerance = debugTab.addPersistent("Ramp Tolerance",0.05).getEntry();
+    //private NetworkTableEntry currentDump;
+    
 
     private Timer accelTimekeep = new Timer();
      //enable or disable the ramping feature
@@ -169,6 +174,20 @@ public class DriveBase {
         slaveL2.setSmartCurrentLimit(stallAmps, freeAmps, freeRpmMin);
         slaveR2.setSmartCurrentLimit(stallAmps, freeAmps, freeRpmMin);
     }
+
+    public double[] motorCurrentDump(){
+        double[] array = {leaderL.getOutputCurrent(),slaveL.getOutputCurrent(),slaveL2.getOutputCurrent(),leaderR.getOutputCurrent(),slaveR.getOutputCurrent(),slaveR2.getOutputCurrent()};
+        return array;
+    }
+
+    public void putMotorCurrents(){
+        SmartDashboard.putNumberArray("currents", motorCurrentDump());
+    }
+
+    public void putMotorTemps(){
+        SmartDashboard.putNumberArray("temps",motorTemps());
+    }
+    
     //might get in the way of PID
 
     public void initGyro(){
@@ -297,4 +316,15 @@ public class DriveBase {
     private double getMotorShaftSpeed(CANSparkMax motor){
         return ((motor.getEncoder().getVelocity())*9.07);
     }
+
+    /*
+    Code to do autonomous ramping and movement, will probably transfer it over to the practice chassis for experimentation 
+    if I ever have time to get around to programming it while juggling the other 10 things I have to do
+    */
+
+
+    //ramp up to speed "speedTarget" measured in m/s at rate "rate" measured in m/s/s
+    public void rampToSpeed(double speedTarget,double rate){
+        //if(accelTimekeep.get()>lastTime-1)
+    } 
 }

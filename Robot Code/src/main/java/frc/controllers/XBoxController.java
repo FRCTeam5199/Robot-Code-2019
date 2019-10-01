@@ -6,10 +6,13 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 public class XBoxController {
 	private Joystick stick;
 	private double deadzone = 0.07;
+	private boolean triggerFlag = false;
 
 	public XBoxController(int n) {
 		stick = new Joystick(n);
 	}
+
+	
 
 	public double getStickLX() {
 		if (Math.abs(stick.getRawAxis(0)) > deadzone){
@@ -73,5 +76,48 @@ public class XBoxController {
 
 	public void setRRumble(double n) {
 		stick.setRumble(RumbleType.kRightRumble, n);
+	}
+
+	//conor junk
+	double sensitivity;
+
+	public void setTriggerSensitivity(double sens){
+		sensitivity = sens;
+	}
+
+	public boolean getRTriggerPressed(){
+		return getRTrigger()>sensitivity;
+	}
+	public boolean getRTriggerMomentary(){
+		boolean returnBool = false;
+		if(getRTriggerPressed()&&!triggerFlag){
+			triggerFlag = true;
+			returnBool = true;
+		}
+		else if(!getRTriggerPressed()&&triggerFlag){
+			triggerFlag = false;
+		}
+		else{
+			returnBool = false;
+		}
+		return returnBool;
+	}
+
+	public boolean getLTriggerPressed(){
+		return getRTrigger()>sensitivity;
+	}
+	public boolean getLTriggerMomentary(){
+		boolean returnBool = false;
+		if(getLTriggerPressed()&&!triggerFlag){
+			triggerFlag = true;
+			returnBool = true;
+		}
+		else if(!getLTriggerPressed()&&triggerFlag){
+			triggerFlag = false;
+		}
+		else{
+			returnBool = false;
+		}
+		return returnBool;
 	}
 }

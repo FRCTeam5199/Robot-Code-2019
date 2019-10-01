@@ -50,7 +50,7 @@ public class Lift{
     }
 
     public void clutchOn(){
-        clutch.setAngle(60);
+        clutch.setAngle(0); //CHANGED TO ZERO 9/28/19 FOR HEXFLY SERVO FIX
     }
 
     public void setClutch(double a){

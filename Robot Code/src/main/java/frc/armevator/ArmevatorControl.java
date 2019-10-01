@@ -17,7 +17,7 @@ public class ArmevatorControl implements LoopModule {
     private double eleTarget = 0;
     private double eleMotorPos;
     // The max height of the elevator is in arbitrary units
-    private double eleMaxHeight = -32.5;
+    private double eleMaxHeight = -32.5; 
     //comp bot ele height ^
     // private double eleMaxHeight = -20.5;
     //practice bot ele height ^
@@ -148,8 +148,13 @@ public class ArmevatorControl implements LoopModule {
         //this lifts the elevator to move the arm out of its kickstand
     }
 
+    public void deployArm(){ // deploy arm at start
+        moveArmTo(ArmConstants.hatch1[0], ArmConstants.hatch1[1]);
+    }
+
     @Override
     public void update(long delta) {
+        arm.dumpEleCurrentValue();
         // findArmPositions();
 
         /* //manual arm movement
@@ -264,7 +269,7 @@ public class ArmevatorControl implements LoopModule {
         // hatch3^
         if(panel.getButton(14)){
             if(elpos != -11.0){
-                moveEleTo(-11.0);
+                moveEleTo(-11.0); 
             }
             moveArmTo(0, 0);
             panel.lastButton = 14;

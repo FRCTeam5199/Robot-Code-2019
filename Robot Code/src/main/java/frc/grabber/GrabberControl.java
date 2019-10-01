@@ -13,12 +13,18 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 import edu.wpi.first.wpilibj.shuffleboard.*;
+import frc.robot.RobotMap;
+import edu.wpi.first.wpilibj.Servo;
 
 public class GrabberControl implements LoopModule {
-    public ShuffleboardTab debugTab = Shuffleboard.getTab("Driver Control Options");
-    private NetworkTableEntry conorMode = debugTab.addPersistent("Driver Hatch Intake Control", false).getEntry(); //allow driver hatch control
-    private NetworkTableEntry cargoToggle = debugTab.addPersistent("Driver Cargo Intake Control", false).getEntry(); //allow driver full cargo control
-    private NetworkTableEntry cargoTriggerSpitterToggle = debugTab.addPersistent("Driver Cargo Trigger Control", false).getEntry(); //allow driver cargo outtake control
+    public ShuffleboardTab debugTab2 = Shuffleboard.getTab("Driver Control Options");
+    private NetworkTableEntry conorMode = debugTab2.addPersistent("Driver Hatch Intake Control", false).getEntry(); //allow driver hatch control
+    private NetworkTableEntry cargoToggle = debugTab2.addPersistent("Driver Cargo Intake Control", false).getEntry(); //allow driver full cargo control
+    private NetworkTableEntry cargoTriggerSpitterToggle = debugTab2.addPersistent("Driver Cargo Trigger Control", false).getEntry(); //allow driver cargo outtake control
+    private NetworkTableEntry hatchBooperTiming = debugTab2.addPersistent("Poker Delay", 22).getEntry(); //the small value
+    private NetworkTableEntry hatchBooperTimingB = debugTab2.addPersistent("Poker Delay B", 300).getEntry(); //the big value
+    private NetworkTableEntry cargoCompensator = debugTab2.addPersistent("Passive Cargo Intake Speed", 0).getEntry();
+    private NetworkTableEntry fullDriverControl = debugTab2.addPersistent("Single Controller Mode", false).getEntry();
     private final Grabber grabber;
     private final JoystickController Joy;
     private final ButtonPanel panel;
@@ -29,12 +35,14 @@ public class GrabberControl implements LoopModule {
     private boolean pokersOut;
     private double lastTime, inspeed;
     private int lastButton;
+    private Servo clutch;
     
     public GrabberControl(Grabber grabber, JoystickController Joy, ButtonPanel panel, XBoxController controller) {
         this.grabber = grabber;
         this.Joy = Joy;
         this.panel = panel;
         this.controller = controller;
+        clutch = new Servo(RobotMap.clutchServoTest);
     }
 
     @Override
@@ -55,10 +63,19 @@ public class GrabberControl implements LoopModule {
         this.lastButton = panel.lastButton;
         boolean driverHatch = conorMode.getBoolean(false);
         boolean driverCargo = cargoToggle.getBoolean(false);
+        boolean driverControl = fullDriverControl.getBoolean(false);
+        double hatchBooperTime = hatchBooperTiming.getDouble(22);
+        double hatchBooperTimeB = hatchBooperTimingB.getDouble(300);
         SmartDashboard.putBoolean("hatchMode?", driverHatch);
         SmartDashboard.putBoolean("cargoMode?", driverCargo);
+        SmartDashboard.putNumber("timing A", hatchBooperTime);
+        SmartDashboard.putNumber("timing B", hatchBooperTimeB);
+        double cargoCompensation = cargoCompensator.getDouble(0);
+        controller.setTriggerSensitivity(0.02);
+        //SmartDashboard.putBoolean("joy trigger", Joy.getButtonDown(1));
+        //SmartDashboard.putBoolean("xbox trigger", (controller.getRTrigger()>0.05));
         // Cargo: Joystick
-        if (Joy.hatUp()||((controller.getStickRY()>0.3)&&driverCargo)||(controller.getLTrigger()>0.1&&cargoTriggerSpitterToggle.getBoolean(false))) { //0.3 seems like a good number, have to intentionally push the stick a ways
+        if (Joy.hatUp()||((controller.getStickRY()>0.3)&&(driverCargo||driverControl))||(controller.getLTrigger()>0.1&&cargoTriggerSpitterToggle.getBoolean(false))) { //0.3 seems like a good number, have to intentionally push the stick a ways
             if(lastButton == 4){ //longboye line ^
                 inspeed = .5;
             }
@@ -66,11 +83,11 @@ public class GrabberControl implements LoopModule {
                 inspeed = 1;
             }
         } 
-        else if (Joy.hatDown()||((controller.getStickRY()<-0.3)&&driverCargo)) { //flip the stick measurements if backwards
+        else if (Joy.hatDown()||((controller.getStickRY()<-0.3)&&(driverCargo||driverControl))) { //flip the stick measurements if backwards
             inspeed = -1;
         } 
         else if (Joy.getHat() == -1){
-            inspeed = 0;
+            inspeed = -cargoCompensation; //able to run inwards now
         }
 
         if (lastButton == 6){
@@ -94,23 +111,26 @@ public class GrabberControl implements LoopModule {
 
         // Hatch: Trigger
         if(true){ //yikes forget why i did this, something about intake position not letting us grab iirc
-            if (Joy.getButtonDown(1)||((controller.getRTrigger()>0.05)&&driverHatch)) { //added code to allow driver control of grabber as an experiment to see if i can push cycle time down/personal taste
+            if (Joy.getButtonDown(1)/*||(controller.getRTriggerMomentary()&&(driverHatch||driverControl))*/) { //added code to allow driver control of grabber as an experiment to see if i can push cycle time down/personal taste
 
                 if (!hasHatch) {
                     grabber.setGrabber(true);
                     grabber.setPokers(false);
                     hasHatch = true;
+                    clutch.setAngle(60);
+                    
                 } else {
                     //grabber.setGrabber(false);
                     grabber.setPokers(true);
                     pokersOut = true;
                     lastTime = System.currentTimeMillis();
+                    clutch.setAngle(0);
                 }
 
                 SmartDashboard.putBoolean("Hatch", hasHatch);
             }
             //change this value for new hatch claws
-            else if (System.currentTimeMillis() > lastTime + 300 && pokersOut) {
+            else if (System.currentTimeMillis() > lastTime + 300 && pokersOut) { //big value
                 grabber.setGrabber(false);
                 grabber.setPokers(false);
                 pokersOut = false;
@@ -118,7 +138,7 @@ public class GrabberControl implements LoopModule {
                 lastTime = System.currentTimeMillis();
             }
             //change this value for new hatch claws
-            else if (System.currentTimeMillis() > lastTime + 22 && pokersOut) {
+            else if (System.currentTimeMillis() > lastTime + 22 && pokersOut) { //small value
                 grabber.setGrabber(false);
                 grabber.setPokers(true);
                 pokersOut = true;

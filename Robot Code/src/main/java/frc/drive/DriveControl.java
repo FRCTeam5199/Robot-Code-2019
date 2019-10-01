@@ -12,7 +12,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
-public class DriveControl implements LoopModule{
+public class DriveControl{
     
 
     private final DriveBase base;
@@ -30,6 +30,7 @@ public class DriveControl implements LoopModule{
     public double targetSpeedAuton;
     //public double accelFactor = .1;
     private static boolean jesusHasWheel;
+    //private boolean driverBlock = false;
 
     public DriveControl(DriveBase base, XBoxController controller) {
         this.base = base;
@@ -39,6 +40,11 @@ public class DriveControl implements LoopModule{
         jesusHasWheel = false;
         speed = kSpeed;
     }
+
+    /*public void blockDriverControl(){
+        driverBlock = true; //if driver block is true, just set wheels to zero and disallow all other functions
+        //DRIVER BLOCK MUST BE FALSE FOR ANYTHING BESIDES SETTING SPEEDS TO ZERO TO HAPPEN IN UPDATE
+    }*/
 
     public void init(){
         base.setDriveCoast();
@@ -131,22 +137,24 @@ public class DriveControl implements LoopModule{
         return base;
     }
 
-    @Override
-    public void update(long delta){
-        printEncoderPos();
-        printMotorTempAvg();
-        printMotorTempMax();
-        SmartDashboard.putNumber("Avg FPS",base.getFpsAvg());
-        SmartDashboard.putNumber("Avg RPM",base.getRpmsAvg());
+    //@Override
+    public void update(){
+        //printEncoderPos();
+        //printMotorTempAvg();
+        //printMotorTempMax();
+        //base.putMotorCurrents();
+        //base.putMotorTemps();
+        //SmartDashboard.putNumber("Avg FPS",base.getFpsAvg());
+        //SmartDashboard.putNumber("Avg RPM",base.getRpmsAvg());
 
-        SmartDashboard.putNumber("LeaderL", base.motorTemps()[0]);
-        SmartDashboard.putNumber("SlaveL", base.motorTemps()[1]);
-        SmartDashboard.putNumber("SlaveL2", base.motorTemps()[2]);
 
-        SmartDashboard.putNumber("Speed",base.convertVelocityToSpeed(base.getRpmsLeft()));
+        //SmartDashboard.putNumber("LeaderL", base.motorTemps()[0]);
+        //SmartDashboard.putNumber("SlaveL", base.motorTemps()[1]);
+        //SmartDashboard.putNumber("SlaveL2", base.motorTemps()[2]);
+
+        //SmartDashboard.putNumber("Speed",base.convertVelocityToSpeed(base.getRpmsLeft()));
         //base.printGyroVals();
         // printSticks(); 
-
         if(controller.getButtonDown(6)){
             jesusTakeTheWheel();
             jesusHasWheel = true;

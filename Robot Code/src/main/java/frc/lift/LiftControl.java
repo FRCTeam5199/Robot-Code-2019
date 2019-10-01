@@ -6,20 +6,25 @@ import frc.controllers.JoystickController;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import frc.lift.Lift;
 import frc.interfaces.LoopModule;
+import frc.robot.RobotMap;
+import edu.wpi.first.wpilibj.Servo;
 
-public class LiftControl implements LoopModule{
+public class LiftControl{
     private final Lift lift;
     private final ButtonPanel panel;
     private boolean LocksOn;
+    private Servo clutch;
 
     public LiftControl(Lift lift, ButtonPanel panel){
         this.lift = lift;
         this.panel = panel;
+        clutch = new Servo(RobotMap.clutchServoThird);
     }
 
     public void init(){
         LocksOn = false;
-        lift.setClutch(0);
+        lift.setClutch(60);
+        clutch.setAngle(60);
     }
     public void liftUp(){
         lift.winchUp();

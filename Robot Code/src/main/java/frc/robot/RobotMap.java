@@ -49,5 +49,7 @@ public class RobotMap {
 
 	// PWM
 	public static final int clutchServo = 0;
+	public static final int clutchServoTest = 1;
+	public static final int clutchServoThird = 2;
 	
 }

@@ -7,10 +7,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.CANPIDController;
+/*import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.ControlType;
+import com.revrobotics.ControlType;*/
 import com.revrobotics.CANSparkMax.IdleMode;
+
+/*import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.networktables.NetworkTable;
+
+import edu.wpi.first.wpilibj.shuffleboard.*;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;*/
 
 public class Armevator {
 
@@ -22,6 +30,7 @@ public class Armevator {
     private PIDController elbowPID;
     private PIDController wristPID;
     private PIDController elePID;
+
 
     //weight: ?
     // Empirical Stall Torque: 2.6 Nm
@@ -38,7 +47,7 @@ public class Armevator {
         elbowRatio = 2.9387755102040816326530612244898;
         wristRatio = 120/49;
         //units still arent exactly in inches, what is wrong with ratio?:
-        eleRatio = ((1/14.5384615) * 1.751) * Math.PI;
+        eleRatio = (((1/14.5384615) * 1.751) * Math.PI)/0.7; //0.7 added when changing from mislabeled 10:1 to 7:1
         //1:7 -> 26:54
         //sprocket diam = 1.751
 
@@ -218,6 +227,10 @@ public class Armevator {
 
     public void setCargoIntake(double n) {
         intakeMotor.set(ControlMode.PercentOutput, n);
+    }
+
+    public void dumpEleCurrentValue(){
+        SmartDashboard.putNumber("ele motor current", eleMotor.getOutputCurrent());
     }
 
 }

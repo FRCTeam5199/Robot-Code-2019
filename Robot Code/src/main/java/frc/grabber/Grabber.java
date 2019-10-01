@@ -20,6 +20,8 @@ public class Grabber {
         // hatchGuidePiston = new Solenoid(RobotMap.vPiston);
 
         intake.setNeutralMode(NeutralMode.Brake);
+        setGrabber(false);
+        setPokers(false);
     }
 
     public void setGrabber(boolean b) {

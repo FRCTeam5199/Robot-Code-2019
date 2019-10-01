@@ -47,6 +47,10 @@ public class Robot extends TimedRobot {
     private JoystickController Joy;
     private ButtonPanel panel;
     private XBoxController Xbox;
+    private boolean hatchGrabbed;
+    //private boolean armDeployed;
+
+    //public ShuffleboardTab config = Shuffleboard.getTab("CONFIG");
 
     @Override
     public void robotInit() {
@@ -72,15 +76,21 @@ public class Robot extends TimedRobot {
 
     }
 
-    /* @Override
+    @Override
     public void teleopInit() {
-
-    } */
+        //do literally nothing but I want to leave the loop here in case I need it for anything
+    } 
 
     @Override
     public void teleopPeriodic() {
+        armControl.update();
+        grabberControl.update();
+        liftControl.update();
+        driveControl.update();
         
-        ClockRegulator cl = new ClockRegulator(50);
+        //F for bigLoop.
+
+        /*ClockRegulator cl = new ClockRegulator(50);
         BigLoop bigLoop = new BigLoop(cl);
 
         bigLoop.add(armControl);
@@ -92,23 +102,44 @@ public class Robot extends TimedRobot {
         
         while (isEnabled() && (isOperatorControl() || isAutonomous())) {
             bigLoop.update();
-            
         }
-        bigLoop.cleanUp();
+        bigLoop.cleanUp();*/
     }
 
     @Override
     public void autonomousInit() {
+        hatchGrabbed = false;
+        lift.setClutch(60);
+        //armDeployed = false;
         arm.encoderReset();
-        grabber.setGrabber(true);
-        grabberControl.hasHatch = true;
-        armControl.exitStow();
+        //grabber.setGrabber(true);       //reenabled this stuff after chezy, but I'll have to see what happens at BB during practice
+        //grabberControl.hasHatch = true; //matches because they run cheesy arena(disabled to fix our hatch dropping issue)
+        //armControl.exitStow();
         base.gearChange(false);
+
+        //inits pulled in from bigloop below
+        armControl.init();
+        grabberControl.init();
+        liftControl.init();
+        driveControl.init();
     }
     //init 1 time inits from here, iterative robot shouldn't be set up like this to avoid loop overruns, just making do
 
     @Override
     public void autonomousPeriodic() {
+        /*if(!armDeployed){
+            armControl.deployArm();
+            armDeployed = true;
+        }*/
+        /*if(!hatchGrabbed&&false){ //run code once here instead of autonomousInit because cheesy field is being funny
+            lift.setClutch(60);
+            arm.encoderReset();
+            grabber.setGrabber(true); 
+            grabberControl.hasHatch = true;
+            armControl.exitStow();
+            base.gearChange(false);
+            hatchGrabbed = true;
+        }*/
         teleopPeriodic();
     }
 
@@ -116,6 +147,7 @@ public class Robot extends TimedRobot {
     public void testInit(){
         arm.encoderReset();
         base.setSpeedZero();
+        driveControl.init();
         // grabber.setGrabber(true);
         // grabberControl.hasHatch = true;
         // armControl.exitStow();
@@ -124,6 +156,8 @@ public class Robot extends TimedRobot {
     @Override
     public void testPeriodic(){
 
+        driveControl.update();
+        /*
         ClockRegulator cl = new ClockRegulator(50);
         BigLoop bigLoop = new BigLoop(cl);
 
@@ -138,6 +172,6 @@ public class Robot extends TimedRobot {
             // limey.printValues();
             // camera angles^
         }
-        bigLoop.cleanUp();
+        bigLoop.cleanUp();*/
     }
 }
