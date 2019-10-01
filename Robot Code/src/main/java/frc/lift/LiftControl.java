@@ -35,8 +35,8 @@ public class LiftControl{
     public void liftDown(){
         lift.winchDown();
     }
-    @Override
-    public void update(long delta){
+    //@Override
+    public void update(){
 
         if(panel.getButtonDown(10)){
             liftDown();

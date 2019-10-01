@@ -15,8 +15,9 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.shuffleboard.*;
 import frc.robot.RobotMap;
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.DigitalInput;
 
-public class GrabberControl implements LoopModule {
+public class GrabberControl{
     public ShuffleboardTab debugTab2 = Shuffleboard.getTab("Driver Control Options");
     private NetworkTableEntry conorMode = debugTab2.addPersistent("Driver Hatch Intake Control", false).getEntry(); //allow driver hatch control
     private NetworkTableEntry cargoToggle = debugTab2.addPersistent("Driver Cargo Intake Control", false).getEntry(); //allow driver full cargo control
@@ -36,6 +37,9 @@ public class GrabberControl implements LoopModule {
     private double lastTime, inspeed;
     private int lastButton;
     private Servo clutch;
+    private DigitalInput limitSwitch;
+    private boolean hasSwitch;
+    private boolean triggerFlag;
     
     public GrabberControl(Grabber grabber, JoystickController Joy, ButtonPanel panel, XBoxController controller) {
         this.grabber = grabber;
@@ -43,9 +47,10 @@ public class GrabberControl implements LoopModule {
         this.panel = panel;
         this.controller = controller;
         clutch = new Servo(RobotMap.clutchServoTest);
+        limitSwitch = new DigitalInput(9);
     }
 
-    @Override
+    //@Override
     public void init() {
         
         grabber.setIntake(0);
@@ -58,18 +63,33 @@ public class GrabberControl implements LoopModule {
         guideOn = false;
     }
 
-    @Override
-    public void update(long delta) {
+    private boolean getSwitchMomentary(){ //gets the limit switch as a blip boolean 
+        boolean returnBool = false;
+		if(limitSwitch.get()&&!triggerFlag){
+			triggerFlag = true;
+			returnBool = true;
+		}
+		else if(!limitSwitch.get()&&triggerFlag){
+			triggerFlag = false;
+		}
+		else{
+			returnBool = false;
+		}
+		return returnBool;
+    }
+
+    //@Override
+    public void update() {
         this.lastButton = panel.lastButton;
         boolean driverHatch = conorMode.getBoolean(false);
         boolean driverCargo = cargoToggle.getBoolean(false);
         boolean driverControl = fullDriverControl.getBoolean(false);
         double hatchBooperTime = hatchBooperTiming.getDouble(22);
         double hatchBooperTimeB = hatchBooperTimingB.getDouble(300);
-        SmartDashboard.putBoolean("hatchMode?", driverHatch);
-        SmartDashboard.putBoolean("cargoMode?", driverCargo);
-        SmartDashboard.putNumber("timing A", hatchBooperTime);
-        SmartDashboard.putNumber("timing B", hatchBooperTimeB);
+        //SmartDashboard.putBoolean("hatchMode?", driverHatch);
+        //SmartDashboard.putBoolean("cargoMode?", driverCargo);
+        //SmartDashboard.putNumber("timing A", hatchBooperTime);
+        //SmartDashboard.putNumber("timing B", hatchBooperTimeB);
         double cargoCompensation = cargoCompensator.getDouble(0);
         controller.setTriggerSensitivity(0.02);
         //SmartDashboard.putBoolean("joy trigger", Joy.getButtonDown(1));
@@ -97,6 +117,15 @@ public class GrabberControl implements LoopModule {
             grabber.setIntake(inspeed);
         }
 
+        //code to grab hatch using limit switch without having the shoot hatch logic
+        if(!hasSwitch&&getSwitchMomentary()){ 
+            grabber.setGrabber(true);
+            grabber.setPokers(false);
+            hasHatch = true;
+            hasSwitch = true;
+        }
+
+
         /* //Cargo Intake when in manual override
         if(Joy.getButtonDown(5) || Joy.getButtonDown(6)){
             grabber.setIntake(1);
@@ -111,8 +140,8 @@ public class GrabberControl implements LoopModule {
 
         // Hatch: Trigger
         if(true){ //yikes forget why i did this, something about intake position not letting us grab iirc
-            if (Joy.getButtonDown(1)/*||(controller.getRTriggerMomentary()&&(driverHatch||driverControl))*/) { //added code to allow driver control of grabber as an experiment to see if i can push cycle time down/personal taste
-
+            if (Joy.getButtonDown(1)||(controller.getRTriggerMomentary()&&(driverHatch||driverControl))/*||getSwitchMomentary()*/) { //added code to allow driver control of grabber as an experiment to see if i can push cycle time down/personal taste
+                                                                //lim switch junk, remove if stuff is screwed up ^^^
                 if (!hasHatch) {
                     grabber.setGrabber(true);
                     grabber.setPokers(false);
@@ -130,7 +159,7 @@ public class GrabberControl implements LoopModule {
                 SmartDashboard.putBoolean("Hatch", hasHatch);
             }
             //change this value for new hatch claws
-            else if (System.currentTimeMillis() > lastTime + 300 && pokersOut) { //big value
+            else if (System.currentTimeMillis() > lastTime + hatchBooperTimeB && pokersOut) { //big value
                 grabber.setGrabber(false);
                 grabber.setPokers(false);
                 pokersOut = false;
@@ -138,7 +167,7 @@ public class GrabberControl implements LoopModule {
                 lastTime = System.currentTimeMillis();
             }
             //change this value for new hatch claws
-            else if (System.currentTimeMillis() > lastTime + 22 && pokersOut) { //small value
+            else if (System.currentTimeMillis() > lastTime + hatchBooperTime && pokersOut) { //small value
                 grabber.setGrabber(false);
                 grabber.setPokers(true);
                 pokersOut = true;

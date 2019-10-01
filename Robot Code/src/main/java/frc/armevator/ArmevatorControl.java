@@ -7,7 +7,7 @@ import frc.interfaces.LoopModule;
 import frc.motion.Interpolator;
 // import frc.util.Vector2;
 
-public class ArmevatorControl implements LoopModule {
+public class ArmevatorControl{
 
     private final JoystickController Joy;
     private final ButtonPanel panel;
@@ -52,7 +52,7 @@ public class ArmevatorControl implements LoopModule {
 
     }
 
-    @Override
+    //@Override
     public void init() {
         arm.setArmBreak();
         // arm.setArmCoast();
@@ -152,8 +152,8 @@ public class ArmevatorControl implements LoopModule {
         moveArmTo(ArmConstants.hatch1[0], ArmConstants.hatch1[1]);
     }
 
-    @Override
-    public void update(long delta) {
+    //@Override
+    public void update() {
         arm.dumpEleCurrentValue();
         // findArmPositions();
 

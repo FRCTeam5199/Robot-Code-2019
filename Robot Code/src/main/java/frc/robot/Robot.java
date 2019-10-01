@@ -48,7 +48,7 @@ public class Robot extends TimedRobot {
     private ButtonPanel panel;
     private XBoxController Xbox;
     private boolean hatchGrabbed;
-    //private boolean armDeployed;
+    private boolean armDeployed;
 
     //public ShuffleboardTab config = Shuffleboard.getTab("CONFIG");
 
@@ -109,12 +109,12 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         hatchGrabbed = false;
-        lift.setClutch(60);
-        //armDeployed = false;
+        //lift.setClutch(60);
+        armDeployed = false;
         arm.encoderReset();
-        //grabber.setGrabber(true);       //reenabled this stuff after chezy, but I'll have to see what happens at BB during practice
-        //grabberControl.hasHatch = true; //matches because they run cheesy arena(disabled to fix our hatch dropping issue)
-        //armControl.exitStow();
+        grabber.setGrabber(true);       //reenabled this stuff after chezy, but I'll have to see what happens at BB during practice
+        grabberControl.hasHatch = true; //matches because they run cheesy arena(disabled to fix our hatch dropping issue)
+        armControl.exitStow();
         base.gearChange(false);
 
         //inits pulled in from bigloop below
@@ -127,10 +127,10 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousPeriodic() {
-        /*if(!armDeployed){
-            armControl.deployArm();
+        if(!armDeployed){
+            lift.setClutch(60); //repurposed to do clutch
             armDeployed = true;
-        }*/
+        }
         /*if(!hatchGrabbed&&false){ //run code once here instead of autonomousInit because cheesy field is being funny
             lift.setClutch(60);
             arm.encoderReset();
